@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        html, body, #map-canvas {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLdNmTVBAkJC-GYP8SS51Fa-dG8DyvLSQ&callback=initMap"
+            async defer></script>
+    <script>
+      var map;
+      var directionsDisplay;
+      var directionsService;
+      var geocoder;
+
+      function create_markers(waypoints, num_waypoints) {
+        for(i = 0; i < num_waypoints; i++) {
+            geocoder.geocode({
+                                address: waypoints[i]
+                             },
+                             function(results, status) {
+                                if(status == google.maps.GeocoderStatus.OK) {
+                                    var marker = new google.maps.Marker({
+                                                                            position: results[0].geometry.location,
+                                                                            map: map,
+                                                                            title: "Hello!"
+                                                                         });
+                                }
+                             });
+        }
+      }
+
+      function get_dir(waypoints) {
+        var d_wps = [];
+
+        for(i = 0; i < waypoints.length; i++) {
+            d_wps.push({
+                            location: waypoints[i],
+                            stopover: true
+                      });
+        }
+
+        var request = {
+            origin: "chicago, il",
+            destination: "st louis, mo",
+            travelMode: google.maps.TravelMode.DRIVING,
+            waypoints: d_wps
+            };
+        directionsService.route(request, function(result, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(result);
+            }
+        });
+      }
+
+      function initMap() {
+        directionsDisplay = new google.maps.DirectionsRenderer();
+        directionsService = new google.maps.DirectionsService();
+        geocoder = new google.maps.Geocoder
+        map = new google.maps.Map(document.getElementById('map-canvas'), {
+          center: {lat: 41.850033, lng: -87.6500523},
+          zoom: 8
+        });
+        directionsDisplay.setMap(map);
+      }
+    </script>
+</head>
+<body>
+<div id="map-canvas"></div>
+</body>
+</html>
