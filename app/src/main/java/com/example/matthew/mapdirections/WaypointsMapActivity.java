@@ -54,6 +54,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
     private void route_waypoints() {
         ArrayList<String> waypoints = intent.getStringArrayListExtra(AddWaypointsActivity.MAP_WAYPOINTS);
         final int num_waypoints = intent.getIntExtra(AddWaypointsActivity.NUM_MAP_WAYPOINTS, 0);
+        final String hotel = intent.getStringExtra(AddWaypointsActivity.MAP_HOTEL);
         final JSONArray jsonArray = new JSONArray(waypoints);
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient() {
@@ -62,7 +63,8 @@ public class WaypointsMapActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url)
             {
                 WebView webView = (WebView) findViewById(R.id.webview);
-                webView.evaluateJavascript("get_dir("+jsonArray.toString()+","+num_waypoints+");", null);
+                webView.evaluateJavascript("get_dir("+jsonArray.toString()+","+num_waypoints+","+
+                        '"'+hotel+'"'+");", null);
             }
         });
     }

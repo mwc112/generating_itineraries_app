@@ -2,24 +2,19 @@ package com.example.matthew.mapdirections;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.text.InputType;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -36,6 +31,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
     private int num_waypoints = 0;
     public final static String MAP_WAYPOINTS = "com.example.matthew.MAP_WAYPOINTS";
     public final static String NUM_MAP_WAYPOINTS = "com.example.matthew.NUM_MAP_WAYPOINTS";
+    public final static String MAP_HOTEL = "com.example.matthew.MAP_HOTEL";
     private final static int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
     @Override
@@ -75,6 +71,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, WaypointsMapActivity.class);
         intent.putExtra(MAP_WAYPOINTS, waypoints);
         intent.putExtra(NUM_MAP_WAYPOINTS, num_waypoints);
+        intent.putExtra(MAP_HOTEL, ((EditText) findViewById(R.id.txtHotel)).getText().toString());
         startActivity(intent);
     }
 

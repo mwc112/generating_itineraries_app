@@ -46,7 +46,7 @@
         }
       }
 
-      function get_dir(waypoints, num_waypoints) {
+      function get_dir(waypoints, num_waypoints, hotel) {
         var d_wps = [];
 
         for(i = 0; i < num_waypoints; i++) {
@@ -57,8 +57,8 @@
         }
 
         var request = {
-            origin: "chicago, il",
-            destination: "new york city, ny",
+            origin: hotel,
+            destination: hotel,
             travelMode: google.maps.TravelMode.DRIVING,
             waypoints: d_wps
             };

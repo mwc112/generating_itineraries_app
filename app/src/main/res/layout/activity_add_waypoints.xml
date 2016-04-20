@@ -12,7 +12,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtOrigin"
+        android:id="@+id/txtHotel"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/labelOrigin"
@@ -25,33 +25,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Origin"
+        android:text="Hotel"
         android:id="@+id/labelOrigin"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:editable="false" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Destination"
-        android:id="@+id/labelDest"
-        android:layout_alignTop="@+id/txtDest"
-        android:layout_alignParentStart="true"
-        android:textSize="@dimen/abc_text_size_large_material" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtDest"
-        android:enabled="true"
-        android:editable="false"
-        android:layout_below="@+id/txtOrigin"
-        android:layout_alignEnd="@+id/txtOrigin"
-        android:layout_toEndOf="@+id/labelDest"
-        android:inputType="text"
-        android:focusableInTouchMode="true" />
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -68,10 +46,10 @@
         android:layout_height="wrap_content"
         android:text="Add"
         android:id="@+id/btnAdd"
-        android:layout_below="@+id/txtDest"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="48dp"
-        android:onClick="onClickAdd" />
+        android:onClick="onClickAdd"
+        android:layout_below="@+id/txtHotel" />
 
 
     <Button
