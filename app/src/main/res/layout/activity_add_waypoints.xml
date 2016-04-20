@@ -31,7 +31,8 @@
         android:id="@+id/labelOrigin"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:editable="false" />
+        android:editable="false"
+        android:textSize="@dimen/abc_text_size_large_material" />
 
     <ScrollView
         android:layout_width="wrap_content"
