@@ -19,7 +19,7 @@ import java.util.ArrayList;
 //TODO: Use offset instead of shuffling all values
 //TODO: Finish removing elements - either tell map number of elements or physically remove from arraylist
 
-public class AddWaypoints extends AppCompatActivity {
+public class AddWaypointsActivity extends AppCompatActivity {
 
     private LinearLayout linearLayout;
     private ArrayList<String> waypoints;
@@ -73,7 +73,7 @@ public class AddWaypoints extends AppCompatActivity {
 
     public void onClickMap(View view)
     {
-        Intent intent = new Intent(this, WaypointsMap.class);
+        Intent intent = new Intent(this, WaypointsMapActivity.class);
         intent.putExtra(MAP_WAYPOINTS, waypoints);
         intent.putExtra(NUM_MAP_WAYPOINTS, num_waypoints);
         startActivity(intent);

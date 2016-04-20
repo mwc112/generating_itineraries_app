@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class WaypointsMap extends AppCompatActivity {
+public class WaypointsMapActivity extends AppCompatActivity {
 
     private Intent intent;
 
@@ -35,8 +35,8 @@ public class WaypointsMap extends AppCompatActivity {
 
     private void plot_waypoints()
     {
-        ArrayList<String> waypoints = intent.getStringArrayListExtra(AddWaypoints.MAP_WAYPOINTS);
-        final int numWaypoints = intent.getIntExtra(AddWaypoints.NUM_MAP_WAYPOINTS, 0);
+        ArrayList<String> waypoints = intent.getStringArrayListExtra(AddWaypointsActivity.MAP_WAYPOINTS);
+        final int numWaypoints = intent.getIntExtra(AddWaypointsActivity.NUM_MAP_WAYPOINTS, 0);
         final JSONArray jsonArray = new JSONArray(waypoints);
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient() {
