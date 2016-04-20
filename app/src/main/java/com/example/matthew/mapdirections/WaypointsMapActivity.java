@@ -23,7 +23,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
         intent = getIntent();
 
         set_up_maps();
-        plot_waypoints();
+        route_waypoints();
     }
 
     private void set_up_maps()
@@ -51,8 +51,9 @@ public class WaypointsMapActivity extends AppCompatActivity {
 
     }
 
-    /*private void route_waypoints() {
-        ArrayList<String> waypoints = intent.getStringArrayListExtra(AddWaypoints.MAP_WAYPOINTS);
+    private void route_waypoints() {
+        ArrayList<String> waypoints = intent.getStringArrayListExtra(AddWaypointsActivity.MAP_WAYPOINTS);
+        final int num_waypoints = intent.getIntExtra(AddWaypointsActivity.NUM_MAP_WAYPOINTS, 0);
         final JSONArray jsonArray = new JSONArray(waypoints);
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient() {
@@ -61,8 +62,8 @@ public class WaypointsMapActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url)
             {
                 WebView webView = (WebView) findViewById(R.id.webview);
-                webView.evaluateJavascript("get_dir("+jsonArray.toString()+");", null);
+                webView.evaluateJavascript("get_dir("+jsonArray.toString()+","+num_waypoints+");", null);
             }
         });
-    }*/
+    }
 }

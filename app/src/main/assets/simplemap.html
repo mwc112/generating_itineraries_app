@@ -31,15 +31,25 @@
                                                                             map: map,
                                                                             title: "Hello!"
                                                                          });
+
+                                    var infowindow = new google.maps.InfoWindow({
+                                                                                content: results[0].address_components[0].short_name
+
+
+
+                                                                                });
+                                    marker.addListener('click', function(){
+                                                                          infowindow.open(map, marker);
+                                                                          });
                                 }
                              });
         }
       }
 
-      function get_dir(waypoints) {
+      function get_dir(waypoints, num_waypoints) {
         var d_wps = [];
 
-        for(i = 0; i < waypoints.length; i++) {
+        for(i = 0; i < num_waypoints; i++) {
             d_wps.push({
                             location: waypoints[i],
                             stopover: true
@@ -48,7 +58,7 @@
 
         var request = {
             origin: "chicago, il",
-            destination: "st louis, mo",
+            destination: "new york city, ny",
             travelMode: google.maps.TravelMode.DRIVING,
             waypoints: d_wps
             };
