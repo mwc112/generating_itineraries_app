@@ -5,12 +5,19 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.text.InputType;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
 import org.w3c.dom.Text;
 
@@ -25,11 +32,11 @@ public class AddWaypointsActivity extends AppCompatActivity {
     private ArrayList<String> waypoints;
     private ScrollView scrlWaypoints;
     private View[] viewWaypoints;
-    private TextView inputTextView;
     private int selected = 0;
     private int num_waypoints = 0;
     public final static String MAP_WAYPOINTS = "com.example.matthew.MAP_WAYPOINTS";
     public final static String NUM_MAP_WAYPOINTS = "com.example.matthew.NUM_MAP_WAYPOINTS";
+    private final static int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +45,6 @@ public class AddWaypointsActivity extends AppCompatActivity {
 
         scrlWaypoints = (ScrollView) findViewById(R.id.scrllWaypoints);
         scrlWaypoints.setBackgroundColor(Color.parseColor("#ffe3e3e3"));
-        inputTextView = (TextView) findViewById(R.id.txtAdd);
 
         linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -47,28 +53,21 @@ public class AddWaypointsActivity extends AppCompatActivity {
 
         waypoints = new ArrayList<String>(20);
         viewWaypoints = new View[20];
+
     }
 
     public void onClickAdd(View view)
     {
-        TextView textView = new TextView(this);
-        textView.setText(inputTextView.getText());
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(selected != -1)
-                    linearLayout.getChildAt(selected).setBackgroundColor(Color.parseColor("#ffe3e3e3"));
-                selected = v.getId();
-                v.setBackgroundColor(Color.GREEN);
-            }
-        });
-        linearLayout.addView(textView);
-        viewWaypoints[num_waypoints] = textView;
-        textView.setId(num_waypoints);
-        num_waypoints++;
-        waypoints.add(inputTextView.getText().toString());
-        inputTextView.setText("");
-        inputTextView.clearFocus();
+        try {
+            Intent searchIntent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
+            startActivityForResult(searchIntent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        }
+        catch(GooglePlayServicesRepairableException e) {
+
+        }
+        catch (GooglePlayServicesNotAvailableException e) {
+
+        }
     }
 
     public void onClickMap(View view)
@@ -147,4 +146,35 @@ public class AddWaypointsActivity extends AppCompatActivity {
             linearLayout.addView(viewWaypoints[i]);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+
+                TextView textView = new TextView(this);
+                textView.setText(place.getName());
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (selected != -1)
+                            linearLayout.getChildAt(selected).setBackgroundColor(Color.parseColor("#ffe3e3e3"));
+                        selected = v.getId();
+                        v.setBackgroundColor(Color.GREEN);
+                    }
+                });
+                linearLayout.addView(textView);
+                viewWaypoints[num_waypoints] = textView;
+                textView.setId(num_waypoints);
+                num_waypoints++;
+                waypoints.add(place.getName().toString());
+
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+            } else if (resultCode == RESULT_CANCELED) {
+            }
+        }
+    }
+
 }
