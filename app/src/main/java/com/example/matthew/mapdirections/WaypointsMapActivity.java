@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+//TODO: implement on button click methods
+
 public class WaypointsMapActivity extends AppCompatActivity {
 
     private Intent intent;
@@ -66,13 +68,5 @@ public class WaypointsMapActivity extends AppCompatActivity {
                         '"'+hotel+'"'+");", null);
             }
         });
-    }
-
-    public void onSelectChooseTime(View view) {
-        Intent newIntent = new Intent(this, SelectTimeActivity.class);
-        newIntent.putExtra(AddWaypointsActivity.MAP_WAYPOINTS, intent.getStringArrayExtra(AddWaypointsActivity.MAP_WAYPOINTS));
-        newIntent.putExtra(AddWaypointsActivity.NUM_MAP_WAYPOINTS, intent.getIntExtra(AddWaypointsActivity.NUM_MAP_WAYPOINTS, 0));
-        newIntent.putExtra(AddWaypointsActivity.MAP_HOTEL,intent.getStringExtra(AddWaypointsActivity.MAP_HOTEL));
-        startActivity(newIntent);
     }
 }
