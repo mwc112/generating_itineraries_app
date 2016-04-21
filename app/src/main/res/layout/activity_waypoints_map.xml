@@ -6,7 +6,14 @@
 
     <WebView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="447dp"
         android:id="@+id/webview" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Select Time"
+        android:id="@+id/btnSelectTime"
+        android:onClick="onSelectChooseTime" />
 
 </LinearLayout>

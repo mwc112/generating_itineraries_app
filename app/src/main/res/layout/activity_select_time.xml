@@ -21,11 +21,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time"
+        android:text="New Text"
         android:id="@+id/txtStart"
+        android:textIsSelectable="false"
         android:textSize="@dimen/abc_text_size_large_material"
         android:layout_below="@+id/labelStart"
-        android:layout_alignEnd="@+id/labelStart"
-        android:layout_marginTop="71dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="47dp"
+        android:onClick="onClickTime" />
 
 </RelativeLayout>
