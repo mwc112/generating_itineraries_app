@@ -25,9 +25,21 @@ public class SelectTimeActivity extends FragmentActivity {
         setContentView(R.layout.activity_select_time);
     }
 
-    public void onClickTime(View view) {
+    public void onClickStartTime(View view) {
         DialogFragment dialogFragment = new OnTimeFragment();
         dialogFragment.show(getSupportFragmentManager(), "show_time");
     }
 
+    public void onClickEndTime(View view)
+    {
+        DialogFragment dialogFragment = new OnTimeFragment() {
+          @Override
+          public void onTimeSet(TimePicker view, int hour, int minute)
+          {
+              ((TextView)getActivity().findViewById(R.id.txtEnd)).setText(hour+":"+minute);
+          }
+        };
+
+        dialogFragment.show(getSupportFragmentManager(), "show_end_time");
+    }
 }

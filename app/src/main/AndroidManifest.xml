@@ -20,11 +20,6 @@
         <activity
             android:name=".AddWaypointsActivity"
             android:windowSoftInputMode="adjustNothing">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".WaypointsMapActivity"
@@ -34,7 +29,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".AddWaypointsActivity" />
         </activity>
-        <activity android:name=".SelectTimeActivity"></activity>
+        <activity android:name=".SelectTimeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

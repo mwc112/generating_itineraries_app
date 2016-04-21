@@ -28,6 +28,27 @@
         android:layout_below="@+id/labelStart"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
-        android:onClick="onClickTime" />
+        android:onClick="onClickStartTime" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time to return to hotel:"
+        android:id="@+id/labelEnd"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/txtEnd"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:onClick="onClickEndTime"
+        android:layout_below="@+id/labelEnd"
+        android:layout_alignStart="@+id/txtStart"
+        android:layout_marginTop="54dp" />
 
 </RelativeLayout>
