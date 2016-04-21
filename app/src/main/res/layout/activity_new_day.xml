@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    tools:context="com.example.matthew.mapdirections.NewDayActivity">
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Waypoints"
+        android:id="@+id/btnNewDayChooseWaypoints" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:id="@+id/labelNewDayStart"
+            android:layout_weight="1.0"
+            android:textAlignment="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@drawable/ic_media_route_on_0_mono_dark"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="End"
+            android:id="@+id/labelNewDayStart1"
+            android:layout_weight="1.0"
+            android:textAlignment="center"
+            android:textIsSelectable="false"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@drawable/ic_media_route_on_0_mono_dark"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:textAlignment="center"
+            android:textSize="22sp"
+            android:id="@+id/clockNewDayStart"
+            android:text="19:00"
+            android:onClick="onClickNewDayStartTime" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:textAlignment="center"
+            android:textSize="22sp"
+            android:text="19:00"
+            android:id="@+id/clockNewDayEnd"
+            android:onClick="onClickNewDayEndTime" />
+    </LinearLayout>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Generate Route"
+        android:id="@+id/btnNewDayGenerateRoute" />
+
+</LinearLayout>
