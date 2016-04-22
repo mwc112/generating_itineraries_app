@@ -37,9 +37,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".GenerateShowDayItinaryActivity" />
-        <activity android:name=".RootMenuActivity"
-            android:label="@string/title_activity_root_menu">
-        </activity>
+        <activity
+            android:name=".RootMenuActivity"
+            android:label="@string/title_activity_root_menu" />
+        <activity android:name=".ChooseCreationMethodActivity" />
+        <activity android:name=".ManualCreationTripActivity"></activity>
     </application>
 
 </manifest>
