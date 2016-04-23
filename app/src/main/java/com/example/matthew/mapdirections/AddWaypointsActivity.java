@@ -66,6 +66,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, WaypointsMapActivity.class);
         intent.putExtra(MAP_WAYPOINTS, waypoints);
         intent.putExtra(NUM_MAP_WAYPOINTS, num_waypoints);
+        intent.putExtra(MAP_HOTEL, "chicago, il");
         startActivity(intent);
     }
 

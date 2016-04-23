@@ -51,7 +51,9 @@
 
         for(i = 0; i < num_waypoints; i++) {
             d_wps.push({
-                            location: waypoints[i],
+                            location: {
+                                            placeId: waypoints[i]
+                                      },
                             stopover: true
                       });
         }
