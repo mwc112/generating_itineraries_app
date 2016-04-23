@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class AddWaypointsActivity extends AppCompatActivity {
 
     private LinearLayout linearLayout;
-    private ArrayList<String> waypoints;
+    private ArrayList<Integer> waypoints;
     private ScrollView scrlWaypoints;
     private View[] viewWaypoints;
     private int selected = 0;
@@ -33,7 +33,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
     public final static String NUM_MAP_WAYPOINTS = "com.example.matthew.NUM_MAP_WAYPOINTS";
     public final static String MAP_HOTEL = "com.example.matthew.MAP_HOTEL";
     private final static int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
-    private final static int HOTEL_AUTOCOMPLETE_REQUEST_CODE = 2;
+    private final static int NEW_WAYPOINT_REQUEST_CODE = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,39 +48,33 @@ public class AddWaypointsActivity extends AppCompatActivity {
         linearLayout.setClickable(true);
         scrlWaypoints.addView(linearLayout);
 
-        waypoints = new ArrayList<String>(20);
+        waypoints = new ArrayList<Integer>(20);
         viewWaypoints = new View[20];
 
     }
 
     public void onClickAdd(View view)
     {
-        try {
-            Intent searchIntent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
-            startActivityForResult(searchIntent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-        }
-        catch(GooglePlayServicesRepairableException e) {
-
-        }
-        catch (GooglePlayServicesNotAvailableException e) {
-
-        }
+        Intent intent = new Intent(this, NewWaypointActivity.class);
+        startActivityForResult(intent, NEW_WAYPOINT_REQUEST_CODE);
     }
 
-    public void onClickMap(View view)
+
+    //TODO: Modify to pass ids instead of names
+    /*public void onClickMap(View view)
     {
         Intent intent = new Intent(this, WaypointsMapActivity.class);
         intent.putExtra(MAP_WAYPOINTS, waypoints);
         intent.putExtra(NUM_MAP_WAYPOINTS, num_waypoints);
         startActivity(intent);
-    }
+    }*/
 
     public void onClickUp(View view)
     {
         if(selected == 0 || selected == -1)
             return;
         View temp = viewWaypoints[selected];
-        String wpt_temp = waypoints.get(selected);
+        int wpt_temp = waypoints.get(selected);
         waypoints.set(selected, waypoints.get(selected - 1));
         waypoints.set(selected - 1, wpt_temp);
         viewWaypoints[selected] = viewWaypoints[selected - 1];
@@ -102,7 +96,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
         if(selected == num_waypoints - 1 || selected == -1)
             return;
         View temp = viewWaypoints[selected];
-        String wptTemp = waypoints.get(selected);
+        int wptTemp = waypoints.get(selected);
         waypoints.set(selected, waypoints.get(selected + 1));
         waypoints.set(selected + 1, wptTemp);
         viewWaypoints[selected] = viewWaypoints[selected + 1];
@@ -124,7 +118,6 @@ public class AddWaypointsActivity extends AppCompatActivity {
     {
         if(selected == num_waypoints - 1)
         {
-            num_waypoints--;
         }
         else {
             for (int i = selected; i < num_waypoints - 1; i++) {
@@ -144,14 +137,15 @@ public class AddWaypointsActivity extends AppCompatActivity {
         }
     }
 
+
+    // TODO: Do something with number of hours that is also passed
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+        if (requestCode == NEW_WAYPOINT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Place place = PlaceAutocomplete.getPlace(this, data);
 
                 TextView textView = new TextView(this);
-                textView.setText(place.getName());
+                textView.setText(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_NAME));
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -165,7 +159,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
                 viewWaypoints[num_waypoints] = textView;
                 textView.setId(num_waypoints);
                 num_waypoints++;
-                waypoints.add(place.getName().toString());
+                waypoints.add(data.getIntExtra(NewWaypointActivity.NEW_WAYPOINT_ID, -1));
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);

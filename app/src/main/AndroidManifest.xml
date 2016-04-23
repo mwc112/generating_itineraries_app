@@ -19,7 +19,13 @@
 
         <activity
             android:name=".AddWaypointsActivity"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustNothing">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".WaypointsMapActivity"
             android:label="@string/title_activity_waypoints_map"
@@ -30,11 +36,6 @@
         </activity>
         <activity android:name=".SelectTimeActivity" />
         <activity android:name=".NewDayActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".GenerateShowDayItinaryActivity" />
         <activity
@@ -42,7 +43,9 @@
             android:label="@string/title_activity_root_menu" />
         <activity android:name=".ChooseCreationMethodActivity" />
         <activity android:name=".ManualCreationTripActivity" />
-        <activity android:name=".NewWaypointActivity"></activity>
+        <activity android:name=".NewWaypointActivity"
+            android:windowSoftInputMode="adjustNothing">
+        </activity>
     </application>
 
 </manifest>
