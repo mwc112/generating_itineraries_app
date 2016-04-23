@@ -19,8 +19,7 @@
 
         <activity
             android:name=".AddWaypointsActivity"
-            android:windowSoftInputMode="adjustNothing">
-        </activity>
+            android:windowSoftInputMode="adjustNothing"></activity>
         <activity
             android:name=".WaypointsMapActivity"
             android:label="@string/title_activity_waypoints_map"
@@ -35,10 +34,17 @@
             android:name=".RootMenuActivity"
             android:label="@string/title_activity_root_menu" />
         <activity android:name=".ChooseCreationMethodActivity" />
-        <activity android:name=".ManualCreationTripActivity" />
-        <activity android:name=".NewWaypointActivity"
-            android:windowSoftInputMode="adjustNothing">
+        <activity android:name=".ManualCreationTripActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".NewWaypointActivity"
+            android:windowSoftInputMode="adjustNothing"></activity>
+        <activity android:name=".AddWaypointsToGenerateActivity"></activity>
     </application>
 
 </manifest>

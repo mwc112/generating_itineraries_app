@@ -30,7 +30,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Day"
-        android:id="@+id/btnManualTripAdd"/>
+        android:id="@+id/btnManualTripAdd"
+        android:onClick="onClickManualCreationNewDay" />
 
     <ScrollView
         android:layout_width="match_parent"
