@@ -22,7 +22,7 @@
       function create_markers(waypoints, num_waypoints) {
         for(i = 0; i < num_waypoints; i++) {
             geocoder.geocode({
-                                address: waypoints[i]
+                                placeId: waypoints[i]
                              },
                              function(results, status) {
                                 if(status == google.maps.GeocoderStatus.OK) {

@@ -25,7 +25,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
         intent = getIntent();
 
         set_up_maps();
-        route_waypoints();
+        plot_waypoints();
     }
 
     private void set_up_maps()

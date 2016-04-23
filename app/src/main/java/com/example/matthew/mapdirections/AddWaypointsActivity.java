@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class AddWaypointsActivity extends AppCompatActivity {
 
     private LinearLayout linearLayout;
-    private ArrayList<Integer> waypoints;
+    private ArrayList<String> waypoints;
     private ScrollView scrlWaypoints;
     private View[] viewWaypoints;
     private int selected = 0;
@@ -48,7 +48,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
         linearLayout.setClickable(true);
         scrlWaypoints.addView(linearLayout);
 
-        waypoints = new ArrayList<Integer>(20);
+        waypoints = new ArrayList<String>(20);
         viewWaypoints = new View[20];
 
     }
@@ -61,20 +61,20 @@ public class AddWaypointsActivity extends AppCompatActivity {
 
 
     //TODO: Modify to pass ids instead of names
-    /*public void onClickMap(View view)
+    public void onClickMap(View view)
     {
         Intent intent = new Intent(this, WaypointsMapActivity.class);
         intent.putExtra(MAP_WAYPOINTS, waypoints);
         intent.putExtra(NUM_MAP_WAYPOINTS, num_waypoints);
         startActivity(intent);
-    }*/
+    }
 
     public void onClickUp(View view)
     {
         if(selected == 0 || selected == -1)
             return;
         View temp = viewWaypoints[selected];
-        int wpt_temp = waypoints.get(selected);
+        String wpt_temp = waypoints.get(selected);
         waypoints.set(selected, waypoints.get(selected - 1));
         waypoints.set(selected - 1, wpt_temp);
         viewWaypoints[selected] = viewWaypoints[selected - 1];
@@ -96,7 +96,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
         if(selected == num_waypoints - 1 || selected == -1)
             return;
         View temp = viewWaypoints[selected];
-        int wptTemp = waypoints.get(selected);
+        String wptTemp = waypoints.get(selected);
         waypoints.set(selected, waypoints.get(selected + 1));
         waypoints.set(selected + 1, wptTemp);
         viewWaypoints[selected] = viewWaypoints[selected + 1];
@@ -159,7 +159,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
                 viewWaypoints[num_waypoints] = textView;
                 textView.setId(num_waypoints);
                 num_waypoints++;
-                waypoints.add(data.getIntExtra(NewWaypointActivity.NEW_WAYPOINT_ID, -1));
+                waypoints.add(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_ID));
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
