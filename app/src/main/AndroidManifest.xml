@@ -20,11 +20,6 @@
         <activity
             android:name=".AddWaypointsActivity"
             android:windowSoftInputMode="adjustNothing">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".WaypointsMapActivity"
@@ -35,8 +30,6 @@
                 android:value=".AddWaypointsActivity" />
         </activity>
         <activity android:name=".SelectTimeActivity" />
-        <activity android:name=".NewDayActivity">
-        </activity>
         <activity android:name=".GenerateShowDayItinaryActivity" />
         <activity
             android:name=".RootMenuActivity"

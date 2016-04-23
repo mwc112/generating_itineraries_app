@@ -2,6 +2,7 @@ package com.example.matthew.mapdirections;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -20,6 +22,8 @@ import java.util.ArrayList;
 
 //TODO: Use offset instead of shuffling all values
 //TODO: Finish removing elements - either tell map number of elements or physically remove from arraylist
+//TODO: Need to know what day it is for when things are open
+//TODO: Need to know when things are open
 
 public class AddWaypointsActivity extends AppCompatActivity {
 
@@ -32,8 +36,11 @@ public class AddWaypointsActivity extends AppCompatActivity {
     public final static String MAP_WAYPOINTS = "com.example.matthew.MAP_WAYPOINTS";
     public final static String NUM_MAP_WAYPOINTS = "com.example.matthew.NUM_MAP_WAYPOINTS";
     public final static String MAP_HOTEL = "com.example.matthew.MAP_HOTEL";
+    public final static String RESULT_ADD_WAYPOINT_WAYPOINTS = "com.example.matthew.RESULT_ADD_WAYPOINT_WAYPOINTS";
+    public final static String RESULT_ADD_WAYPOINT_NUM_WAYPOINTS = "com.example.matthew.RESULT_ADD_WAYPOINT_NUM_WAYPOINTS";
     private final static int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private final static int NEW_WAYPOINT_REQUEST_CODE = 3;
+    private final static int MAP_REQUEST_CODE = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,21 +60,40 @@ public class AddWaypointsActivity extends AppCompatActivity {
 
     }
 
+    public void onClickAddWaypointsStartTime(View view) {
+        DialogFragment dialogFragment = new OnTimeFragment() {
+            @Override
+            public void onTimeSet(TimePicker view, int hour, int minute) {
+                ((TextView) getActivity().findViewById(R.id.txtAddWaypointsStart)).setText(hour+":"+minute);
+            }
+        };
+        dialogFragment.show(getSupportFragmentManager(), "time_new_day_start");
+    }
+
+
+    public void onClickAddWaypointsEndTime(View view) {
+        DialogFragment dialogFragment = new OnTimeFragment() {
+            @Override
+            public void onTimeSet(TimePicker view, int hour, int minute) {
+                ((TextView)getActivity().findViewById(R.id.txtAddWaypointsEnd)).setText(hour+":"+minute);
+            }
+        };
+        dialogFragment.show(getSupportFragmentManager(), "time_new_day_start");
+    }
+
     public void onClickAdd(View view)
     {
         Intent intent = new Intent(this, NewWaypointActivity.class);
         startActivityForResult(intent, NEW_WAYPOINT_REQUEST_CODE);
     }
 
-
-    //TODO: Modify to pass ids instead of names
     public void onClickMap(View view)
     {
         Intent intent = new Intent(this, WaypointsMapActivity.class);
         intent.putExtra(MAP_WAYPOINTS, waypoints);
         intent.putExtra(NUM_MAP_WAYPOINTS, num_waypoints);
         intent.putExtra(MAP_HOTEL, "chicago, il");
-        startActivity(intent);
+        startActivityForResult(intent, MAP_REQUEST_CODE);
     }
 
     public void onClickUp(View view)
@@ -140,8 +166,19 @@ public class AddWaypointsActivity extends AppCompatActivity {
 
 
     // TODO: Do something with number of hours that is also passed
+    // TODO: Pass directions as well as just locations?  Directions may change?  But then time will change?
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == MAP_REQUEST_CODE) {
+            if(resultCode == RESULT_OK) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(RESULT_ADD_WAYPOINT_WAYPOINTS, waypoints);
+                resultIntent.putExtra(RESULT_ADD_WAYPOINT_NUM_WAYPOINTS, num_waypoints);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        }
+
         if (requestCode == NEW_WAYPOINT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
 

@@ -69,4 +69,9 @@ public class WaypointsMapActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void onClickMapsConfirm(View view) {
+        setResult(RESULT_OK);
+        finish();
+    }
 }

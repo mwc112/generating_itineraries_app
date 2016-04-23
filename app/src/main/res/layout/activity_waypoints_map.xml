@@ -23,7 +23,8 @@
             android:layout_height="match_parent"
             android:text="Confirm"
             android:id="@+id/btnMapWaypointsConfirm"
-            android:layout_weight="1.0"/>
+            android:layout_weight="1.0"
+            android:onClick="onClickMapsConfirm" />
     </LinearLayout>
 
 </LinearLayout>
