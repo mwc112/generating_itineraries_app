@@ -41,7 +41,8 @@
             android:name=".RootMenuActivity"
             android:label="@string/title_activity_root_menu" />
         <activity android:name=".ChooseCreationMethodActivity" />
-        <activity android:name=".ManualCreationTripActivity"></activity>
+        <activity android:name=".ManualCreationTripActivity" />
+        <activity android:name=".NewWaypointActivity"></activity>
     </application>
 
 </manifest>

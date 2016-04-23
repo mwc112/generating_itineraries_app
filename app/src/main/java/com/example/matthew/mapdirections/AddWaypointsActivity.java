@@ -72,7 +72,6 @@ public class AddWaypointsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, WaypointsMapActivity.class);
         intent.putExtra(MAP_WAYPOINTS, waypoints);
         intent.putExtra(NUM_MAP_WAYPOINTS, num_waypoints);
-        intent.putExtra(MAP_HOTEL, ((EditText) findViewById(R.id.txtHotel)).getText().toString());
         startActivity(intent);
     }
 
@@ -147,10 +146,6 @@ public class AddWaypointsActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == HOTEL_AUTOCOMPLETE_REQUEST_CODE) {
-            Place place = PlaceAutocomplete.getPlace(this, data);
-            ((EditText)findViewById(R.id.txtHotel)).setText(place.getName());
-        }
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
@@ -176,20 +171,6 @@ public class AddWaypointsActivity extends AppCompatActivity {
                 Status status = PlaceAutocomplete.getStatus(this, data);
             } else if (resultCode == RESULT_CANCELED) {
             }
-        }
-    }
-
-    public void onClickTxtHotel(View view)
-    {
-        try {
-            Intent searchIntent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
-            startActivityForResult(searchIntent, HOTEL_AUTOCOMPLETE_REQUEST_CODE);
-        }
-        catch(GooglePlayServicesRepairableException e) {
-
-        }
-        catch (GooglePlayServicesNotAvailableException e) {
-
         }
     }
 
