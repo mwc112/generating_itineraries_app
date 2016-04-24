@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class AddWaypointsActivity extends AppCompatActivity {
 
     private LinearLayout linearLayout;
-    private ArrayList<String> waypoints;
+    private String[][] waypoints;
     private ScrollView scrlWaypoints;
     private View[] viewWaypoints;
     private int selected = 0;
@@ -36,8 +36,8 @@ public class AddWaypointsActivity extends AppCompatActivity {
     public final static String MAP_WAYPOINTS = "com.example.matthew.MAP_WAYPOINTS";
     public final static String NUM_MAP_WAYPOINTS = "com.example.matthew.NUM_MAP_WAYPOINTS";
     public final static String MAP_HOTEL = "com.example.matthew.MAP_HOTEL";
-    public final static String RESULT_ADD_WAYPOINT_WAYPOINTS = "com.example.matthew.RESULT_ADD_WAYPOINT_WAYPOINTS";
-    public final static String RESULT_ADD_WAYPOINT_NUM_WAYPOINTS = "com.example.matthew.RESULT_ADD_WAYPOINT_NUM_WAYPOINTS";
+    public final static String RESULT_ADD_WAYPOINTS_WAYPOINTS = "com.example.matthew.RESULT_ADD_WAYPOINTS_WAYPOINT";
+    public final static String RESULT_ADD_WAYPOINTS_NUM_WAYPOINTS = "com.example.matthew.RESULT_ADD_WAYPOINTS_NUM_WAYPOINTS";
     private final static int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private final static int NEW_WAYPOINT_REQUEST_CODE = 3;
     private final static int MAP_REQUEST_CODE = 4;
@@ -55,7 +55,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
         linearLayout.setClickable(true);
         scrlWaypoints.addView(linearLayout);
 
-        waypoints = new ArrayList<String>(20);
+        waypoints = new String[20][];
         viewWaypoints = new View[20];
 
     }
@@ -101,9 +101,9 @@ public class AddWaypointsActivity extends AppCompatActivity {
         if(selected == 0 || selected == -1)
             return;
         View temp = viewWaypoints[selected];
-        String wpt_temp = waypoints.get(selected);
-        waypoints.set(selected, waypoints.get(selected - 1));
-        waypoints.set(selected - 1, wpt_temp);
+        String[] wpt_temp = waypoints[selected];
+        waypoints[selected] = waypoints[selected - 1];
+        waypoints[selected - 1] = wpt_temp;
         viewWaypoints[selected] = viewWaypoints[selected - 1];
         viewWaypoints[selected - 1] = temp;
         viewWaypoints[selected].setId(selected);
@@ -123,9 +123,9 @@ public class AddWaypointsActivity extends AppCompatActivity {
         if(selected == num_waypoints - 1 || selected == -1)
             return;
         View temp = viewWaypoints[selected];
-        String wptTemp = waypoints.get(selected);
-        waypoints.set(selected, waypoints.get(selected + 1));
-        waypoints.set(selected + 1, wptTemp);
+        String[] wptTemp = waypoints[selected];
+        waypoints[selected] =  waypoints[selected + 1];
+        waypoints[selected + 1] = wptTemp;
         viewWaypoints[selected] = viewWaypoints[selected + 1];
         viewWaypoints[selected + 1] = temp;
 
@@ -150,7 +150,7 @@ public class AddWaypointsActivity extends AppCompatActivity {
             for (int i = selected; i < num_waypoints - 1; i++) {
                 viewWaypoints[i + 1].setId(i);
                 viewWaypoints[i] = viewWaypoints[i + 1];
-                waypoints.set(i, waypoints.get(i + 1));
+                waypoints[i] = waypoints[i + 1];
             }
         }
 
@@ -172,8 +172,8 @@ public class AddWaypointsActivity extends AppCompatActivity {
         if(requestCode == MAP_REQUEST_CODE) {
             if(resultCode == RESULT_OK) {
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(RESULT_ADD_WAYPOINT_WAYPOINTS, waypoints);
-                resultIntent.putExtra(RESULT_ADD_WAYPOINT_NUM_WAYPOINTS, num_waypoints);
+                resultIntent.putExtra(RESULT_ADD_WAYPOINTS_WAYPOINTS, waypoints);
+                resultIntent.putExtra(RESULT_ADD_WAYPOINTS_NUM_WAYPOINTS, num_waypoints);
                 setResult(RESULT_OK, resultIntent);
                 finish();
             }
@@ -181,9 +181,11 @@ public class AddWaypointsActivity extends AppCompatActivity {
 
         if (requestCode == NEW_WAYPOINT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                String[] result = data.getStringArrayExtra(NewWaypointActivity.NEW_WAYPOINT_WAYPOINT);
+
 
                 TextView textView = new TextView(this);
-                textView.setText(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_NAME));
+                textView.setText(result[0]);
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -196,8 +198,8 @@ public class AddWaypointsActivity extends AppCompatActivity {
                 linearLayout.addView(textView);
                 viewWaypoints[num_waypoints] = textView;
                 textView.setId(num_waypoints);
+                waypoints[num_waypoints] = result;
                 num_waypoints++;
-                waypoints.add(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_ID));
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);

@@ -34,8 +34,8 @@ public class ManualCreationTripActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == NEW_WAYPOINTS_REQUEST_CODE) {
             if(resultCode == RESULT_OK) {
-                days_waypoints.add(data.getStringArrayListExtra(AddWaypointsActivity.RESULT_ADD_WAYPOINT_WAYPOINTS));
-                days_num_waypoints.add(data.getIntExtra(AddWaypointsActivity.RESULT_ADD_WAYPOINT_NUM_WAYPOINTS, 0));
+                days_waypoints.add(data.getStringArrayListExtra(AddWaypointsActivity.RESULT_ADD_WAYPOINTS_WAYPOINTS));
+                days_num_waypoints.add(data.getIntExtra(AddWaypointsActivity.RESULT_ADD_WAYPOINTS_NUM_WAYPOINTS, 0));
                 num_days++;
             }
         }
