@@ -10,6 +10,12 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -30,10 +36,16 @@ public class NewWaypointActivity extends AppCompatActivity {
     public final static String NEW_WAYPOINT_NAME = "com.example.matthew.NEW_WAYPOINT_NAME";
     public final static String NEW_WAYPOINT_LATLNG = "com.example.matthew.NEW_WAYPOINT_LATLNG";
 
+    RequestQueue queue;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_waypoint);
+
+        queue = Volley.newRequestQueue(this);
+
         set_up_maps();
     }
 
@@ -76,6 +88,21 @@ public class NewWaypointActivity extends AppCompatActivity {
                         webView.evaluateJavascript("create_markers(" + waypoint.getAddress() + ", 1);", null);
                     }
                 });*/
+
+                StringRequest request = new StringRequest(Request.Method.GET, "http://www.doc.ic.ac.uk/~mwc112/type.php?type=" +
+                        place.getPlaceTypes().get(0),
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                ((EditText)findViewById(R.id.txtAddWaypointHours)).setText(response.substring(1));
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ((EditText)findViewById(R.id.txtAddWaypointHours)).setText("Error");
+                    }
+                });
+                queue.add(request);
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);

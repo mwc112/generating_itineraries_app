@@ -44,7 +44,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:id="@+id/txtAddWaypointHours"
-            android:text="3"
             android:textAlignment="center"/>
 
         <TextView
