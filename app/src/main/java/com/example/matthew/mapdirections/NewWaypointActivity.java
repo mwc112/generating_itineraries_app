@@ -23,6 +23,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 
 import org.json.JSONObject;
@@ -30,11 +31,8 @@ import org.json.JSONObject;
 public class NewWaypointActivity extends AppCompatActivity {
 
     private final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
-    private Place waypoint;
-    public final static String NEW_WAYPOINT_ID = "com.example.matthew.NEW_WAYPOINT_ID";
-    public final static String NEW_WAYPOINT_HOURS = "com.example.matthew.NEW_WAYPOINT_HOURS";
-    public final static String NEW_WAYPOINT_NAME = "com.example.matthew.NEW_WAYPOINT_NAME";
-    public final static String NEW_WAYPOINT_LATLNG = "com.example.matthew.NEW_WAYPOINT_LATLNG";
+    private String[] waypoint;
+    public final static String NEW_WAYPOINT_WAYPOINT = "com.example.matthew.NEW_WAYPOINT_WAYPOINT";
 
     RequestQueue queue;
 
@@ -47,6 +45,7 @@ public class NewWaypointActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
 
         set_up_maps();
+        waypoint = new String[4];
     }
 
     private void set_up_maps()
@@ -77,7 +76,9 @@ public class NewWaypointActivity extends AppCompatActivity {
                 Place place = PlaceAutocomplete.getPlace(this, data);
 
                 ((TextView)findViewById(R.id.txtAddWaypointWaypoint)).setText(place.getName());
-                waypoint = place;
+                waypoint[0] = place.getName().toString();
+                waypoint[1] = place.getId().toString();
+                waypoint[2] = place.getLatLng().toString();
 
                 /*WebView webView = ((WebView) findViewById(R.id.webAddWaypoint));
                 webView.setWebViewClient(new WebViewClient() {
@@ -95,6 +96,7 @@ public class NewWaypointActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(String response) {
                                 ((EditText)findViewById(R.id.txtAddWaypointHours)).setText(response.substring(1));
+                                waypoint[3] = response.substring(1);
                             }
                         }, new Response.ErrorListener() {
                     @Override
@@ -113,11 +115,7 @@ public class NewWaypointActivity extends AppCompatActivity {
 
     public void onClickNewWaypointResult(View view) {
         Intent intent = new Intent();
-        intent.putExtra(NEW_WAYPOINT_ID, waypoint.getId());
-        intent.putExtra(NEW_WAYPOINT_HOURS, ((EditText) findViewById(R.id.txtAddWaypointHours)).getText());
-        intent.putExtra(NEW_WAYPOINT_NAME, waypoint.getName());
-        intent.putExtra(NEW_WAYPOINT_LATLNG, waypoint.getLatLng().toString());
-
+        intent.putExtra(NEW_WAYPOINT_WAYPOINT, waypoint);
         setResult(RESULT_OK, intent);
         finish();
     }

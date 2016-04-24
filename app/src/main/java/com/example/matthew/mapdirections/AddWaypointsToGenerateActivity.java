@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -14,15 +15,16 @@ import android.widget.TimePicker;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
     private ScrollView scrlWaypoints;
     private LinearLayout linearLayout;
-    private ArrayList<String> waypoints;
-    private ArrayList<String> latlng_waypoints;
     private View[] viewWaypoints;
+    private String[][] waypoints;
     private int num_waypoints = 0;
     private int selected = -1;
 
@@ -46,9 +48,8 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         linearLayout.setClickable(true);
         scrlWaypoints.addView(linearLayout);
 
-        waypoints = new ArrayList<String>(20);
+        waypoints = new String[20][];
         viewWaypoints = new View[20];
-        latlng_waypoints = new ArrayList<String>(20);
     }
 
     public void onClickAddWaypointsGenStartTime(View view) {
@@ -90,8 +91,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
             for (int i = selected; i < num_waypoints - 1; i++) {
                 viewWaypoints[i + 1].setId(i);
                 viewWaypoints[i] = viewWaypoints[i + 1];
-                waypoints.set(i, waypoints.get(i + 1));
-                latlng_waypoints.set(i, latlng_waypoints.get(i + 1));
+                waypoints[i] = waypoints[i+1];
             }
         }
 
@@ -108,9 +108,10 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_WAYPOINT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                String[] result = data.getStringArrayExtra(NewWaypointActivity.NEW_WAYPOINT_WAYPOINT);
 
                 TextView textView = new TextView(this);
-                textView.setText(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_NAME));
+                textView.setText(result[0]);
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -124,8 +125,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                 viewWaypoints[num_waypoints] = textView;
                 textView.setId(num_waypoints);
                 num_waypoints++;
-                waypoints.add(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_ID));
-                latlng_waypoints.add(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_LATLNG));
+                waypoints[num_waypoints] = result;
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
