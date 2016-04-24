@@ -15,6 +15,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.model.LatLng;
 
 import net.sf.json.JSONArray;
 
@@ -27,6 +28,7 @@ public class NewWaypointActivity extends AppCompatActivity {
     public final static String NEW_WAYPOINT_ID = "com.example.matthew.NEW_WAYPOINT_ID";
     public final static String NEW_WAYPOINT_HOURS = "com.example.matthew.NEW_WAYPOINT_HOURS";
     public final static String NEW_WAYPOINT_NAME = "com.example.matthew.NEW_WAYPOINT_NAME";
+    public final static String NEW_WAYPOINT_LATLNG = "com.example.matthew.NEW_WAYPOINT_LATLNG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +87,10 @@ public class NewWaypointActivity extends AppCompatActivity {
     public void onClickNewWaypointResult(View view) {
         Intent intent = new Intent();
         intent.putExtra(NEW_WAYPOINT_ID, waypoint.getId());
-        intent.putExtra(NEW_WAYPOINT_HOURS, ((EditText)findViewById(R.id.txtAddWaypointHours)).getText());
+        intent.putExtra(NEW_WAYPOINT_HOURS, ((EditText) findViewById(R.id.txtAddWaypointHours)).getText());
         intent.putExtra(NEW_WAYPOINT_NAME, waypoint.getName());
+        intent.putExtra(NEW_WAYPOINT_LATLNG, waypoint.getLatLng().toString());
+
         setResult(RESULT_OK, intent);
         finish();
     }

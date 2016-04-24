@@ -21,6 +21,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     private ScrollView scrlWaypoints;
     private LinearLayout linearLayout;
     private ArrayList<String> waypoints;
+    private ArrayList<String> latlng_waypoints;
     private View[] viewWaypoints;
     private int num_waypoints = 0;
     private int selected = -1;
@@ -37,7 +38,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_waypoints_to_generate);
 
-        scrlWaypoints = (ScrollView) findViewById(R.id.scrllWaypoints);
+        scrlWaypoints = (ScrollView) findViewById(R.id.scrllAddWaypointsGenWaypoints);
         scrlWaypoints.setBackgroundColor(Color.parseColor("#ffe3e3e3"));
 
         linearLayout = new LinearLayout(this);
@@ -47,6 +48,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
         waypoints = new ArrayList<String>(20);
         viewWaypoints = new View[20];
+        latlng_waypoints = new ArrayList<String>(20);
     }
 
     public void onClickAddWaypointsGenStartTime(View view) {
@@ -70,13 +72,13 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         dialogFragment.show(getSupportFragmentManager(), "time_new_day_start");
     }
 
-    public void onClickAdd(View view)
+    public void onClickAddWaypointsGenAdd(View view)
     {
         Intent intent = new Intent(this, NewWaypointActivity.class);
         startActivityForResult(intent, NEW_WAYPOINT_REQUEST_CODE);
     }
 
-    public void onClickMap(View view)
+    public void onClickAddWaypointsGenMap(View view)
     {
 
     }
@@ -89,6 +91,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                 viewWaypoints[i + 1].setId(i);
                 viewWaypoints[i] = viewWaypoints[i + 1];
                 waypoints.set(i, waypoints.get(i + 1));
+                latlng_waypoints.set(i, latlng_waypoints.get(i + 1));
             }
         }
 
@@ -122,6 +125,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                 textView.setId(num_waypoints);
                 num_waypoints++;
                 waypoints.add(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_ID));
+                latlng_waypoints.add(data.getStringExtra(NewWaypointActivity.NEW_WAYPOINT_LATLNG));
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
