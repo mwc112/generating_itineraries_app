@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.android.volley.toolbox.StringRequest;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,6 +21,9 @@ import java.util.Collection;
 public class WaypointsMapActivity extends AppCompatActivity {
 
     private Intent intent;
+    public static String WAYPOINTS_MAP_WAYPOINTS = "com.example.matthew.WAYPOINTS_MAP_WAYPOINTS";
+    public static String WAYPOINTS_MAP_NUM_WAYPOINTS = "com.example.matthew.WAYPOINTS_MAP_NUM_WAYPOINTS";
+    public static String WAYPOINTS_MAP_HOTEL = "com.example.matthew.WAYPOINTS_MAP_HOTEL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +60,16 @@ public class WaypointsMapActivity extends AppCompatActivity {
     }
 
     private void route_waypoints() {
-        ArrayList<String> waypoints = intent.getStringArrayListExtra(AddWaypointsActivity.MAP_WAYPOINTS);
-        final int num_waypoints = intent.getIntExtra(AddWaypointsActivity.NUM_MAP_WAYPOINTS, 0);
-        final String hotel = intent.getStringExtra(AddWaypointsActivity.MAP_HOTEL);
-        final JSONArray jsonArray = new JSONArray(waypoints);
+        String[][] waypoints = (String[][])intent.getSerializableExtra(WAYPOINTS_MAP_WAYPOINTS);
+        final int num_waypoints = intent.getIntExtra(WAYPOINTS_MAP_NUM_WAYPOINTS, 0);
+        final String hotel = intent.getStringExtra(WAYPOINTS_MAP_HOTEL);
+        ArrayList<String> waypoints_list = new ArrayList<String>();
+
+        for(int i = 0; i < num_waypoints; i++) {
+            waypoints_list.add(waypoints[i][1]);
+        }
+
+        final JSONArray jsonArray = new JSONArray(waypoints_list);
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient() {
 

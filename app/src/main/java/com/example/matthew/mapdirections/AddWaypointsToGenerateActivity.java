@@ -39,8 +39,8 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     private int[] start_time;
     private int[] end_time;
 
-    private final static int NEW_WAYPOINT_REQUEST_CODE = 0;
-    private final static int MAP_REQUEST_CODE = 1;
+    private final int NEW_WAYPOINT_REQUEST_CODE = 0;
+    private final int WAYPOINT_MAP_REQUEST_CODE = 1;
 
     public final static String ADD_WAYPOINTS_GEN_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_WAYPOINTS";
     public final static String ADD_WAYPOINTS_GEN_NUM_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_NUM_WAYPOINTS";
@@ -135,18 +135,24 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         JSONArray jsonToPass = new JSONArray(to_pass);
 
         StringRequest request = new StringRequest(Request.Method.POST, Uri.parse("http://www.doc.ic.ac.uk/~mwc112/shortest_path.php" +
-                "?waypoints="+jsonToPass).toString(), new Response.Listener<String>() {
+                "?waypoints="+jsonToPass).toString(), new ListenerExtended<String>(this) {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONArray a = new JSONArray(response.substring(1));
 
                     if ((int)a.get(a.length() - 1) + sum2 * 3600 >
-                        ((end_time[0] * 3600 + end_time[1] * 60) - (start_time[0] * 3600 + start_time[1] * 60)))
-                    return;
-                else {
-                    ((TextView)findViewById(R.id.txtAddWaypointsGenStart)).setText(R.string.add_waypoints_to_gen_temp);
-                }
+                            ((end_time[0] * 3600 + end_time[1] * 60) - (start_time[0] * 3600 + start_time[1] * 60)))
+                        return;
+                    else {
+                        ((TextView)findViewById(R.id.txtAddWaypointsGenStart)).setText(R.string.add_waypoints_to_gen_temp);
+
+                        Intent child_intent = new Intent(c, WaypointsMapActivity.class);
+                        child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_WAYPOINTS, waypoints);
+                        child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_NUM_WAYPOINTS, num_waypoints);
+                        child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_HOTEL, "Buckingham Palace, London");
+                        startActivityForResult(child_intent, WAYPOINT_MAP_REQUEST_CODE);
+                    }
 
                 }
                 catch (JSONException e) {}
