@@ -23,6 +23,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -137,12 +138,18 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                 "?waypoints="+jsonToPass).toString(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (Integer.parseInt(response.substring(1)) + sum2 * 3600 >
+                try {
+                    JSONArray a = new JSONArray(response.substring(1));
+
+                    if ((int)a.get(a.length() - 1) + sum2 * 3600 >
                         ((end_time[0] * 3600 + end_time[1] * 60) - (start_time[0] * 3600 + start_time[1] * 60)))
                     return;
                 else {
                     ((TextView)findViewById(R.id.txtAddWaypointsGenStart)).setText(R.string.add_waypoints_to_gen_temp);
                 }
+
+                }
+                catch (JSONException e) {}
             }
         }, new Response.ErrorListener() {
             @Override
