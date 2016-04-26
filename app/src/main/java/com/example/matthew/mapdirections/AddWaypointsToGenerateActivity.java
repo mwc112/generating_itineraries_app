@@ -2,6 +2,7 @@ package com.example.matthew.mapdirections;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,9 +13,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -27,6 +35,8 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     private String[][] waypoints;
     private int num_waypoints = 0;
     private int selected = -1;
+    private int[] start_time;
+    private int[] end_time;
 
     private final static int NEW_WAYPOINT_REQUEST_CODE = 0;
     private final static int MAP_REQUEST_CODE = 1;
@@ -34,6 +44,8 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     public final static String ADD_WAYPOINTS_GEN_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_WAYPOINTS";
     public final static String ADD_WAYPOINTS_GEN_NUM_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_NUM_WAYPOINTS";
     public final static String ADD_WAYPOINTS_GEN_HOTEL = "com.example.matthew.ADD_WAYPOINTS_GEN_HOTEL";
+
+    private RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +62,29 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
         waypoints = new String[20][];
         viewWaypoints = new View[20];
+        start_time = new int[2];
+        start_time[0] = 19;
+        start_time[1] = 0;
+        end_time = new int[2];
+        end_time[0] = 19;
+        end_time[1] = 0;
+
+        queue = Volley.newRequestQueue(this);
     }
 
     public void onClickAddWaypointsGenStartTime(View view) {
         DialogFragment dialogFragment = new OnTimeFragment() {
             @Override
             public void onTimeSet(TimePicker view, int hour, int minute) {
-                ((TextView) getActivity().findViewById(R.id.txtAddWaypointsGenStart)).setText(hour+":"+minute);
+                start_time[0] = hour;
+                start_time[1] = minute;
+                String print_minute = Integer.toString(minute);
+                String print_hour = Integer.toString(hour);
+                if(minute < 10)
+                    print_minute = "0" + print_minute;
+                if(hour < 10)
+                    print_hour = "0" + print_hour;
+                ((TextView) getActivity().findViewById(R.id.txtAddWaypointsGenStart)).setText(print_hour+":"+print_minute);
             }
         };
         dialogFragment.show(getSupportFragmentManager(), "time_new_day_start");
@@ -67,7 +95,15 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         DialogFragment dialogFragment = new OnTimeFragment() {
             @Override
             public void onTimeSet(TimePicker view, int hour, int minute) {
-                ((TextView)getActivity().findViewById(R.id.txtAddWaypointsGenEnd)).setText(hour+":"+minute);
+                end_time[0] = hour;
+                end_time[1] = minute;
+                String print_minute = Integer.toString(minute);
+                String print_hour = Integer.toString(hour);
+                if(minute < 10)
+                    print_minute = "0" + print_minute;
+                if(hour < 10)
+                    print_hour = "0" + print_hour;
+                ((TextView)getActivity().findViewById(R.id.txtAddWaypointsGenEnd)).setText(print_hour+":"+print_minute);
             }
         };
         dialogFragment.show(getSupportFragmentManager(), "time_new_day_start");
@@ -81,6 +117,39 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
     public void onClickAddWaypointsGenMap(View view)
     {
+        int sum = 0;
+        for(int i = 0; i < num_waypoints; i++) {
+            sum += Integer.parseInt(waypoints[i][3]);
+        }
+        final int sum2 = sum;
+        if(sum * 60 > ((end_time[0] * 60 + end_time[1]) - (start_time[0] * 60 + start_time[1])))
+            return;
+
+        ArrayList<String> to_pass = new ArrayList<String>();
+
+        for(int i = 0; i < num_waypoints; i++) {
+            to_pass.add(waypoints[i][2]);
+        }
+
+        JSONArray jsonToPass = new JSONArray(to_pass);
+
+        StringRequest request = new StringRequest(Request.Method.POST, Uri.parse("http://www.doc.ic.ac.uk/~mwc112/shortest_path.php" +
+                "?waypoints="+jsonToPass).toString(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (Integer.parseInt(response.substring(1)) + sum2 * 3600 >
+                        ((end_time[0] * 3600 + end_time[1] * 60) - (start_time[0] * 3600 + start_time[1] * 60)))
+                    return;
+                else {
+                    ((TextView)findViewById(R.id.txtAddWaypointsGenStart)).setText(R.string.add_waypoints_to_gen_temp);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        queue.add(request);
 
     }
 
@@ -124,8 +193,8 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                 linearLayout.addView(textView);
                 viewWaypoints[num_waypoints] = textView;
                 textView.setId(num_waypoints);
-                num_waypoints++;
                 waypoints[num_waypoints] = result;
+                num_waypoints++;
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);

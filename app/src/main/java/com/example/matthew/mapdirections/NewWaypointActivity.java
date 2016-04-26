@@ -78,7 +78,8 @@ public class NewWaypointActivity extends AppCompatActivity {
                 ((TextView)findViewById(R.id.txtAddWaypointWaypoint)).setText(place.getName());
                 waypoint[0] = place.getName().toString();
                 waypoint[1] = place.getId().toString();
-                waypoint[2] = place.getLatLng().toString();
+                waypoint[2] = place.getLatLng().toString().substring(10,
+                        place.getLatLng().toString().length() - 2);
 
                 /*WebView webView = ((WebView) findViewById(R.id.webAddWaypoint));
                 webView.setWebViewClient(new WebViewClient() {
@@ -91,12 +92,11 @@ public class NewWaypointActivity extends AppCompatActivity {
                 });*/
 
                 StringRequest request = new StringRequest(Request.Method.GET, "http://www.doc.ic.ac.uk/~mwc112/type.php?type=" +
-                        place.getPlaceTypes().get(0),
+                        place.getPlaceTypes().get(0).toString(),
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
                                 ((EditText)findViewById(R.id.txtAddWaypointHours)).setText(response.substring(1));
-                                waypoint[3] = response.substring(1);
                             }
                         }, new Response.ErrorListener() {
                     @Override
@@ -116,6 +116,7 @@ public class NewWaypointActivity extends AppCompatActivity {
     public void onClickNewWaypointResult(View view) {
         Intent intent = new Intent();
         intent.putExtra(NEW_WAYPOINT_WAYPOINT, waypoint);
+        waypoint[3] = ((TextView)findViewById(R.id.txtAddWaypointHours)).getText().toString();
         setResult(RESULT_OK, intent);
         finish();
     }

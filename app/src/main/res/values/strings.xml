@@ -3,4 +3,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_waypoints_map">Waypoints Map</string>
     <string name="title_activity_root_menu">Main Menu</string>
+    <string name="add_waypoints_to_gen_temp">It worked</string>
 </resources>
