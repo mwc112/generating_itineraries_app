@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.PlaceTypes;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
 import org.json.JSONArray;
@@ -123,8 +124,10 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
             sum += Integer.parseInt(waypoints[i][3]);
         }
         final int sum2 = sum;
-        if(sum * 60 > ((end_time[0] * 60 + end_time[1]) - (start_time[0] * 60 + start_time[1])))
+        if(sum * 60 > ((end_time[0] * 60 + end_time[1]) - (start_time[0] * 60 + start_time[1]))) {
+            ((TextView) findViewById(R.id.txtAddWaypointsGenWarn)).setText("Activities too long");
             return;
+        }
 
         ArrayList<String> to_pass = new ArrayList<String>();
 
@@ -142,8 +145,10 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                     JSONArray a = new JSONArray(response.substring(1));
 
                     if ((int)a.get(a.length() - 1) + sum2 * 3600 >
-                            ((end_time[0] * 3600 + end_time[1] * 60) - (start_time[0] * 3600 + start_time[1] * 60)))
+                            ((end_time[0] * 3600 + end_time[1] * 60) - (start_time[0] * 3600 + start_time[1] * 60))) {
+                        ((TextView) findViewById(R.id.txtAddWaypointsGenWarn)).setText("Journey time makes day too long");
                         return;
+                    }
                     else {
                         ((TextView)findViewById(R.id.txtAddWaypointsGenStart)).setText(R.string.add_waypoints_to_gen_temp);
 
