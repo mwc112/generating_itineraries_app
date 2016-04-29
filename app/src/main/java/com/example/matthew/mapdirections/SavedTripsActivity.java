@@ -13,6 +13,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
@@ -55,6 +56,7 @@ public class SavedTripsActivity extends AppCompatActivity {
             fis.close();
 
             ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes("UTF-8"));
+            //File file = new File(this.getFilesDir(), filename);
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document d = db.parse(bais);
 
@@ -63,7 +65,7 @@ public class SavedTripsActivity extends AppCompatActivity {
 
             for(int i = 0; i < children.getLength(); i++) {
                 TextView textView = new TextView(this);
-                textView.setText(i);
+                textView.setText(Integer.toString(i));
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

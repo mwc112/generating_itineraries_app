@@ -116,6 +116,22 @@ public class WaypointsMapActivity extends AppCompatActivity {
     public void onClickMapsSave(View view) {
         final String filename = "trips.xml";
         try {
+            File file = new File(this.getFilesDir(), filename);
+            if(!file.exists()) {
+                Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                Element rootElement = d.createElement("trips");
+                d.appendChild(rootElement);
+
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                StringWriter writer = new StringWriter();
+                StreamResult result = new StreamResult(writer);
+                transformer.transform(new DOMSource(d), result);
+
+                FileOutputStream output = openFileOutput(filename, Context.MODE_PRIVATE);
+                output.write(writer.toString().getBytes());
+                output.close();
+            }
+
             FileInputStream fis = this.openFileInput(filename);
             InputStreamReader isr = new InputStreamReader(fis);
             char[] inputBuffer = new char[fis.available()];
@@ -128,12 +144,6 @@ public class WaypointsMapActivity extends AppCompatActivity {
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document d = db.parse(bais);
             Node root = d.getFirstChild();
-            if(root == null) {
-                Element trips = d.createElement("trips");
-                d.appendChild(trips);
-                root = trips;
-            }
-
             Element trip = d.createElement("trip");
             root.appendChild(trip);
             //TODO: Create trip ids, different for online/offline?
@@ -173,7 +183,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
             StreamResult result = new StreamResult(writer);
             transformer.transform(new DOMSource(d), result);
 
-            FileOutputStream output = openFileOutput(filename, Context.MODE_APPEND);
+            FileOutputStream output = openFileOutput(filename, Context.MODE_PRIVATE);
             output.write(writer.toString().getBytes());
             output.close();
 

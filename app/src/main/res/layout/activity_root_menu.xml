@@ -10,13 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="New Trip"
-        android:id="@+id/btnRootMenuNewTrip" />
+        android:id="@+id/btnRootMenuNewTrip"
+        android:onClick="onClickRootNew" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Saved Trips"
-        android:id="@+id/btnRootMenuSavedTrips" />
+        android:id="@+id/btnRootMenuSavedTrips"
+        android:onClick="onClickRootSaved" />
 
     <Button
         android:layout_width="match_parent"

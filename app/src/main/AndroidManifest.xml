@@ -32,18 +32,19 @@
         <activity android:name=".GenerateShowDayItinaryActivity" />
         <activity
             android:name=".RootMenuActivity"
-            android:label="@string/title_activity_root_menu" />
+            android:label="@string/title_activity_root_menu">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ChooseCreationMethodActivity" />
         <activity android:name=".ManualCreationTripActivity"></activity>
         <activity
             android:name=".NewWaypointActivity"
             android:windowSoftInputMode="adjustNothing"></activity>
         <activity android:name=".AddWaypointsToGenerateActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".SavedTripsActivity"></activity>
     </application>
