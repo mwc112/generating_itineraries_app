@@ -76,6 +76,8 @@ public class SavedTripsActivity extends AppCompatActivity {
                 linearLayout.addView(textView);
                 viewTrips[numTrips] = textView;
                 textView.setId(numTrips);
+                trips[numTrips] = Integer.toString(i);
+                numTrips++;
             }
         }
         catch (Exception e) {}
