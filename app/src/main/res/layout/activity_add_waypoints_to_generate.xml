@@ -46,7 +46,6 @@
             android:focusableInTouchMode="false"
             android:id="@+id/txtAddWaypointsGenEnd"
             android:onClick="onClickAddWaypointsGenEndTime" />
-private int selected = -1;
     </LinearLayout>
 
     <Button
