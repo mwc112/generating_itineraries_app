@@ -1,8 +1,12 @@
 package com.example.matthew.mapdirections;
 
+import android.content.Context;
 import android.content.Intent;
+import android.provider.DocumentsContract;
+import android.sax.ElementListener;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Xml;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -11,10 +15,36 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlSerializer;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 //TODO: implement on button click methods
 
@@ -83,7 +113,78 @@ public class WaypointsMapActivity extends AppCompatActivity {
         });
     }
 
-    public void onClickMapsConfirm(View view) {
+    public void onClickMapsSave(View view) {
+        final String filename = "trips.xml";
+        try {
+            FileInputStream fis = this.openFileInput(filename);
+            InputStreamReader isr = new InputStreamReader(fis);
+            char[] inputBuffer = new char[fis.available()];
+            isr.read(inputBuffer);
+            String input = new String(inputBuffer);
+            isr.close();
+            fis.close();
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes("UTF-8"));
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document d = db.parse(bais);
+            Node root = d.getFirstChild();
+            if(root == null) {
+                Element trips = d.createElement("trips");
+                d.appendChild(trips);
+                root = trips;
+            }
+
+            Element trip = d.createElement("trip");
+            root.appendChild(trip);
+            //TODO: Create trip ids, different for online/offline?
+            //trip.setAttribute("id", );
+            Element hotel = d.createElement("hotel");
+            trip.appendChild(hotel);
+            hotel.setTextContent("Buckingham Palace, London");
+            Element startTime = d.createElement("start_time");
+            trip.appendChild(startTime);
+            Element startTimeHour = d.createElement("hour");
+            startTime.appendChild(startTimeHour);
+            startTimeHour.setTextContent("17");
+            Element startTimeMinute = d.createElement("minute");
+            startTime.appendChild(startTimeMinute);
+            startTime.setTextContent("0");
+            Element endTime = d.createElement("end_time");
+            trip.appendChild(endTime);
+            Element endTimeHour = d.createElement("hour");
+            endTime.appendChild(endTimeHour);
+            endTimeHour.setTextContent("17");
+            Element endTimeMinute = d.createElement("minute");
+            endTime.appendChild(endTimeMinute);
+            endTimeMinute.setTextContent("0");
+            Element waypoints = d.createElement("waypoints");
+            trip.appendChild(waypoints);
+
+            String[][] waypoints_actual = (String[][])intent.getSerializableExtra(WAYPOINTS_MAP_WAYPOINTS);
+            final int num_waypoints = intent.getIntExtra(WAYPOINTS_MAP_NUM_WAYPOINTS, 0);
+            for(int i = 0; i < num_waypoints; i++) {
+                Element waypoint = d.createElement("waypoint");
+                waypoints.appendChild(waypoint);
+                waypoint.setTextContent(waypoints_actual[i][1]);
+            }
+
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            transformer.transform(new DOMSource(d), result);
+
+            FileOutputStream output = openFileOutput(filename, Context.MODE_APPEND);
+            output.write(writer.toString().getBytes());
+            output.close();
+
+        }
+        catch(FileNotFoundException e) {}
+        catch (IOException e) {}
+        catch (ParserConfigurationException e) {}
+        catch (SAXException e) {}
+        catch (TransformerConfigurationException e ){}
+        catch (TransformerException e) {}
+
         setResult(RESULT_OK);
         finish();
     }
