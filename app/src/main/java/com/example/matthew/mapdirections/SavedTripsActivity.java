@@ -1,6 +1,10 @@
 package com.example.matthew.mapdirections;
 
+import android.app.Service;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -83,5 +87,18 @@ public class SavedTripsActivity extends AppCompatActivity {
             }
         }
         catch (Exception e) {}
+    }
+
+    public void onClickSavedTripsStart(View view) {
+        /*new Thread(new RunnableExtended(this) {
+            @Override
+            public void run() {
+                Intent intent = new Intent(c, testService.class);
+                startService(intent);
+            }
+        }).start();
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();*/
     }
 }

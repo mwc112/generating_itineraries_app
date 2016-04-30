@@ -8,6 +8,8 @@ import android.view.View;
 
 public class RootMenuActivity extends AppCompatActivity {
 
+    private int SAVED_TRIPS_REQUEST_CODE = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,11 +18,20 @@ public class RootMenuActivity extends AppCompatActivity {
 
     public void onClickRootSaved(View view) {
         Intent intent = new Intent(this, SavedTripsActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, SAVED_TRIPS_REQUEST_CODE);
     }
 
     public void onClickRootNew(View view) {
         Intent intent = new Intent(this, AddWaypointsToGenerateActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*if(requestCode == SAVED_TRIPS_REQUEST_CODE) {
+            if(resultCode == RESULT_OK) {
+                finish();
+            }
+        }*/
     }
 }

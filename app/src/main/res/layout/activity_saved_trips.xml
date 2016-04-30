@@ -34,7 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:text="Start"
-            android:id="@+id/btnSavedTripsStart"/>
+            android:id="@+id/btnSavedTripsStart"
+            android:onClick="onClickSavedTripsStart" />
 
     </LinearLayout>
 

@@ -55,6 +55,8 @@ public class WaypointsMapActivity extends AppCompatActivity {
     public static String WAYPOINTS_MAP_NUM_WAYPOINTS = "com.example.matthew.WAYPOINTS_MAP_NUM_WAYPOINTS";
     public static String WAYPOINTS_MAP_HOTEL = "com.example.matthew.WAYPOINTS_MAP_HOTEL";
 
+    public String routes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("file:///android_asset/simplemap.html");
+        webView.addJavascriptInterface(new MapsJavascriptInterface(this), "Android");
     }
 
     private void plot_waypoints()
@@ -178,6 +181,9 @@ public class WaypointsMapActivity extends AppCompatActivity {
                 waypoint.setTextContent(waypoints_actual[i][1]);
             }
 
+            Element routes_elem = d.createElement("routes");
+            trip.appendChild(routes_elem);
+            routes_elem.setTextContent(routes);
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             StringWriter writer = new StringWriter();
             StreamResult result = new StreamResult(writer);
