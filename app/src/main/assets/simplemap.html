@@ -31,17 +31,14 @@
                                                                             map: map,
                                                                             title: "Hello!"
                                                                          });
-
                                     var infowindow = new google.maps.InfoWindow({
                                                                                 content: results[0].address_components[0].short_name
-
-
-
                                                                                 });
                                     marker.addListener('click', function(){
                                                                           infowindow.open(map, marker);
                                                                           });
                                 }
+
                              });
         }
       }
@@ -61,13 +58,11 @@
         var request = {
             origin: hotel,
             destination: hotel,
-            travelMode: google.maps.TravelMode.DRIVING,
-            waypoints: d_wps
+            travelMode: google.maps.TravelMode.TRANSIT
             };
         directionsService.route(request, function(result, status) {
             if (status == google.maps.DirectionsStatus.OK) {
                 directionsDisplay.setDirections(result);
-                Android.setDirections(JSON.stringify(result.routes));
             }
         });
       }

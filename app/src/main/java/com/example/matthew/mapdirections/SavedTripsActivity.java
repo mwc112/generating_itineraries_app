@@ -117,10 +117,14 @@ public class SavedTripsActivity extends AppCompatActivity {
 
                     Node selectedChild = children.item(selected);
                     String hotel = selectedChild.getChildNodes().item(0).getNodeValue();
-                    String routes = selectedChild.getChildNodes().item(4).getNodeValue();
+                    NodeList waypoint_nodes = selectedChild.getChildNodes().item(3).getChildNodes();
+                    String[] waypoints = new String[waypoint_nodes.getLength()];
+                    for(int i = 0; i < waypoint_nodes.getLength(); i++) {
+                        waypoints[i] = waypoint_nodes.item(i).getNodeValue();
+                    }
                     Intent intent = new Intent(c, testService.class);
                     intent.putExtra(RunningTripActivity.RUNNING_TRIP_HOTEL, hotel);
-                    intent.putExtra(RunningTripActivity.RUNNING_TRIP_ROUTES, routes);
+                    intent.putExtra(RunningTripActivity.RUNNING_TRIP_WAYPOINTS, waypoints);
                     startService(intent);
                 }
                 catch (Exception e) {}

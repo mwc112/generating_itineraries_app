@@ -30,6 +30,10 @@ import org.json.JSONObject;
 
 public class NewWaypointActivity extends AppCompatActivity {
 
+    /*
+    * Activity used to find location and add time to waypoint
+     */
+
     private final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private String[] waypoint;
     public final static String NEW_WAYPOINT_WAYPOINT = "com.example.matthew.NEW_WAYPOINT_WAYPOINT";

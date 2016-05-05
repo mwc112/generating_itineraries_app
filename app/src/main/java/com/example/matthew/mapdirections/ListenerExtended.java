@@ -13,6 +13,10 @@ import org.json.JSONException;
  */
 public class ListenerExtended<String> implements Response.Listener<String> {
 
+    /*
+    * Extends listener so that ui can be changed in context (Activity)
+     */
+
     protected Context c;
 
     public ListenerExtended(Context c) {

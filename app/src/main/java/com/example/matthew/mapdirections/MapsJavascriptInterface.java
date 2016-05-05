@@ -10,6 +10,10 @@ import org.json.JSONArray;
  */
 public class MapsJavascriptInterface {
 
+    /*
+    * Interface used by javascript in map activity to store the directions result
+     */
+
     WaypointsMapActivity c;
 
     public MapsJavascriptInterface(WaypointsMapActivity c) {

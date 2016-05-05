@@ -14,14 +14,14 @@ import org.json.JSONObject;
 
 public class testService extends Service {
 
-    // TODO: ON HOLD UNTIL more useful information passed
-
     private int NOTIFICATION_ID = 1;
     private String NOTIFICATION_TITLE = "Time to leave";
     private String NOTIFICATION_CONTENT = "";
     private JSONArray legs;
-    private String currentDest;
-    private String currentDepTime;
+    private String[] dests;
+    private int[][] times;
+    private boolean travelling = false;
+    private int waypoint = 0;
 
     public testService() {
     }
@@ -45,14 +45,8 @@ public class testService extends Service {
     }
 
     private void handleCommand(Intent intent) {
-        try {
-            JSONObject routes = new JSONObject(intent.getStringExtra(RunningTripActivity.RUNNING_TRIP_ROUTES));
-            legs = routes.getJSONArray("legs");
-            JSONObject leg = legs.getJSONObject(0);
-            JSONObject departureTime = leg.getJSONObject("departure_time");
-            //currentDest =
-        }
-        catch(Exception e) {}
+        this.dests = intent.getStringArrayExtra(RunningTripActivity.RUNNING_TRIP_WAYPOINTS);
+
     }
 
     private final IBinder binder = new TestBinder();

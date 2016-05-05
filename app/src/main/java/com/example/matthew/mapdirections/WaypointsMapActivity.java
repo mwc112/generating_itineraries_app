@@ -64,7 +64,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
         intent = getIntent();
 
         set_up_maps();
-        route_waypoints();
+        plot_waypoints();
     }
 
     private void set_up_maps()
@@ -72,14 +72,18 @@ public class WaypointsMapActivity extends AppCompatActivity {
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("file:///android_asset/simplemap.html");
-        webView.addJavascriptInterface(new MapsJavascriptInterface(this), "Android");
     }
 
     private void plot_waypoints()
     {
-        ArrayList<String> waypoints = intent.getStringArrayListExtra(AddWaypointsActivity.MAP_WAYPOINTS);
+        String[][] waypoints = (String[][])intent.getSerializableExtra(WAYPOINTS_MAP_WAYPOINTS);
         final int numWaypoints = intent.getIntExtra(AddWaypointsActivity.NUM_MAP_WAYPOINTS, 0);
-        final JSONArray jsonArray = new JSONArray(waypoints);
+        ArrayList<String> waypoints_list = new ArrayList<String>();
+
+        for(int i = 0; i < numWaypoints; i++) {
+            waypoints_list.add(waypoints[i][1]);
+        }
+        final JSONArray jsonArray = new JSONArray(waypoints_list);
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient() {
 
@@ -181,9 +185,6 @@ public class WaypointsMapActivity extends AppCompatActivity {
                 waypoint.setTextContent(waypoints_actual[i][1]);
             }
 
-            Element routes_elem = d.createElement("routes");
-            trip.appendChild(routes_elem);
-            routes_elem.setTextContent(routes);
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             StringWriter writer = new StringWriter();
             StreamResult result = new StreamResult(writer);

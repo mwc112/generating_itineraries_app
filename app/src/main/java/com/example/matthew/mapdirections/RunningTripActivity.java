@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 public class RunningTripActivity extends AppCompatActivity {
 
-    public static String RUNNING_TRIP_ROUTES = "com.example.matthew.RUNNING_TRIP_ROUTES";
     public static String RUNNING_TRIP_HOTEL = "com.example.matthew.RUNNING_TRIP_HOTEL";
+    public static String RUNNING_TRIP_WAYPOINTS = "com.example.matthew.RUNNING_TRIP_WAYPOINTS";
 
     private testService boundService;
     private ServiceConnection connection;

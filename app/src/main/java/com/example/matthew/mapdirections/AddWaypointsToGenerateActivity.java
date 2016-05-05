@@ -29,6 +29,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/*
+* Activity to list and store waypoints before
+* A. The order of the waypoints has been decided
+* B. The route has been generated
+*
+* TODO: Use generated order of waypoints rather than just order selected
+ */
+
 public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
     private ScrollView scrlWaypoints;
@@ -51,6 +59,10 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /*
+        * Sets up scroll view and arrays to store waypoints
+         */
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_waypoints_to_generate);
 
@@ -75,6 +87,9 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     }
 
     public void onClickAddWaypointsGenStartTime(View view) {
+        /*
+        * Stores start time selected and formats printed time
+         */
         DialogFragment dialogFragment = new OnTimeFragment() {
             @Override
             public void onTimeSet(TimePicker view, int hour, int minute) {
@@ -94,6 +109,9 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
 
     public void onClickAddWaypointsGenEndTime(View view) {
+        /*
+        * Stores end time selected and formats printed time
+         */
         DialogFragment dialogFragment = new OnTimeFragment() {
             @Override
             public void onTimeSet(TimePicker view, int hour, int minute) {
@@ -117,8 +135,10 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         startActivityForResult(intent, NEW_WAYPOINT_REQUEST_CODE);
     }
 
-    public void onClickAddWaypointsGenMap(View view)
-    {
+    public void onClickAddWaypointsGenMap(View view) {
+        /*
+        * Builds request for shortest route and checks if too long for specified time
+         */
         int sum = 0;
         for(int i = 0; i < num_waypoints; i++) {
             sum += Integer.parseInt(waypoints[i][3]);
@@ -144,12 +164,14 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                 try {
                     JSONArray a = new JSONArray(response.substring(1));
 
+                    //Check if travel time and time at locations is too long
                     if ((int)a.get(a.length() - 1) + sum2 * 3600 >
                             ((end_time[0] * 3600 + end_time[1] * 60) - (start_time[0] * 3600 + start_time[1] * 60))) {
                         ((TextView) findViewById(R.id.txtAddWaypointsGenWarn)).setText("Journey time makes day too long");
                         return;
                     }
                     else {
+                        //Pass the information to the map activity to get directions and be displayed
                         ((TextView)findViewById(R.id.txtAddWaypointsGenStart)).setText(R.string.add_waypoints_to_gen_temp);
 
                         Intent child_intent = new Intent(c, WaypointsMapActivity.class);
@@ -193,6 +215,10 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*
+        * On receiving a new waypoint from activity store it
+         */
+
         if (requestCode == NEW_WAYPOINT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String[] result = data.getStringArrayExtra(NewWaypointActivity.NEW_WAYPOINT_WAYPOINT);
