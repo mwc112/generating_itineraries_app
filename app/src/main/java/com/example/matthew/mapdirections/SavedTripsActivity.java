@@ -1,7 +1,9 @@
 package com.example.matthew.mapdirections;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -32,6 +34,10 @@ public class SavedTripsActivity extends AppCompatActivity {
     private int selected = -1;
     private LinearLayout linearLayout;
     private ScrollView scrllTrips;
+
+    private testService boundService;
+    private ServiceConnection connection;
+    private boolean isBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,15 +96,32 @@ public class SavedTripsActivity extends AppCompatActivity {
     }
 
     public void onClickSavedTripsStart(View view) {
-        /*new Thread(new RunnableExtended(this) {
+        new Thread(new RunnableExtended(this) {
             @Override
             public void run() {
                 Intent intent = new Intent(c, testService.class);
                 startService(intent);
             }
         }).start();
+
+        connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                boundService = ((testService.TestBinder)service).getService();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                //Running in same process so shouldn't see it crash (the process crash)
+            }
+
+        };
+
+
+
+
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
-        finish();*/
+        finish();
     }
 }
