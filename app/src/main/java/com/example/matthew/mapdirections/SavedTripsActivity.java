@@ -15,6 +15,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -34,10 +35,6 @@ public class SavedTripsActivity extends AppCompatActivity {
     private int selected = -1;
     private LinearLayout linearLayout;
     private ScrollView scrllTrips;
-
-    private testService boundService;
-    private ServiceConnection connection;
-    private boolean isBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,29 +96,39 @@ public class SavedTripsActivity extends AppCompatActivity {
         new Thread(new RunnableExtended(this) {
             @Override
             public void run() {
-                Intent intent = new Intent(c, testService.class);
-                startService(intent);
+
+                try {
+                    final String filename = "trips.xml";
+                    FileInputStream fis = c.openFileInput(filename);
+                    InputStreamReader isr = new InputStreamReader(fis);
+                    char[] inputBuffer = new char[fis.available()];
+                    isr.read(inputBuffer);
+                    String input = new String(inputBuffer);
+                    isr.close();
+                    fis.close();
+
+                    ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes("UTF-8"));
+                    //File file = new File(this.getFilesDir(), filename);
+                    DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                    Document d = db.parse(bais);
+
+                    Node root = d.getFirstChild();
+                    NodeList children = root.getChildNodes();
+
+                    Node selectedChild = children.item(selected);
+                    String hotel = selectedChild.getChildNodes().item(0).getNodeValue();
+                    String routes = selectedChild.getChildNodes().item(4).getNodeValue();
+                    Intent intent = new Intent(c, testService.class);
+                    intent.putExtra(RunningTripActivity.RUNNING_TRIP_HOTEL, hotel);
+                    intent.putExtra(RunningTripActivity.RUNNING_TRIP_ROUTES, routes);
+                    startService(intent);
+                }
+                catch (Exception e) {}
             }
         }).start();
 
-        connection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                boundService = ((testService.TestBinder)service).getService();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                //Running in same process so shouldn't see it crash (the process crash)
-            }
-
-        };
-
-
-
-
-        Intent intent = new Intent();
-        setResult(RESULT_OK, intent);
+        Intent intent = new Intent(this, RunningTripActivity.class);
+        startActivity(intent);
         finish();
     }
 }

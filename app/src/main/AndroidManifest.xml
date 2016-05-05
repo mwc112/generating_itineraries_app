@@ -44,13 +44,15 @@
         <activity
             android:name=".NewWaypointActivity"
             android:windowSoftInputMode="adjustNothing" />
-        <activity android:name=".AddWaypointsToGenerateActivity"></activity>
+        <activity android:name=".AddWaypointsToGenerateActivity" />
         <activity android:name=".SavedTripsActivity" />
 
         <service
             android:name=".testService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".RunningTripActivity"></activity>
     </application>
 
 </manifest>
