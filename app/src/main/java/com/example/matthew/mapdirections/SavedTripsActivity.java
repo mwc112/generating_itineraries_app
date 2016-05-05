@@ -116,15 +116,23 @@ public class SavedTripsActivity extends AppCompatActivity {
                     NodeList children = root.getChildNodes();
 
                     Node selectedChild = children.item(selected);
-                    String hotel = selectedChild.getChildNodes().item(0).getNodeValue();
+                    String hotel = selectedChild.getChildNodes().item(0).getFirstChild().getNodeValue();
                     NodeList waypoint_nodes = selectedChild.getChildNodes().item(3).getChildNodes();
                     String[] waypoints = new String[waypoint_nodes.getLength()];
                     for(int i = 0; i < waypoint_nodes.getLength(); i++) {
-                        waypoints[i] = waypoint_nodes.item(i).getNodeValue();
+                        waypoints[i] = waypoint_nodes.item(i).getFirstChild().getNodeValue();
                     }
+                    int[][] time = new int[2][2];
+                    Node startTime = selectedChild.getChildNodes().item(1);
+                    Node endTime = selectedChild.getChildNodes().item(2);
+                    time[0][0] = Integer.parseInt(startTime.getFirstChild().getFirstChild().getNodeValue());
+                    time[0][1] = Integer.parseInt(startTime.getLastChild().getFirstChild().getNodeValue());
+                    time[1][0] = Integer.parseInt(endTime.getFirstChild().getFirstChild().getNodeValue());
+                    time[1][1] = Integer.parseInt(endTime.getLastChild().getFirstChild().getNodeValue());
                     Intent intent = new Intent(c, testService.class);
                     intent.putExtra(RunningTripActivity.RUNNING_TRIP_HOTEL, hotel);
                     intent.putExtra(RunningTripActivity.RUNNING_TRIP_WAYPOINTS, waypoints);
+                    intent.putExtra(RunningTripActivity.RUNNING_TRIP_TIMES, time);
                     startService(intent);
                 }
                 catch (Exception e) {}

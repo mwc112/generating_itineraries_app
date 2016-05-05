@@ -156,8 +156,8 @@ public class WaypointsMapActivity extends AppCompatActivity {
             //TODO: Create trip ids, different for online/offline?
             //trip.setAttribute("id", );
             Element hotel = d.createElement("hotel");
-            trip.appendChild(hotel);
             hotel.setTextContent("Buckingham Palace, London");
+            trip.appendChild(hotel);
             Element startTime = d.createElement("start_time");
             trip.appendChild(startTime);
             Element startTimeHour = d.createElement("hour");
@@ -165,7 +165,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
             startTimeHour.setTextContent("17");
             Element startTimeMinute = d.createElement("minute");
             startTime.appendChild(startTimeMinute);
-            startTime.setTextContent("0");
+            startTimeMinute.setTextContent("0");
             Element endTime = d.createElement("end_time");
             trip.appendChild(endTime);
             Element endTimeHour = d.createElement("hour");

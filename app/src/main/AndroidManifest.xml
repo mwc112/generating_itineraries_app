@@ -53,7 +53,10 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".RunningTripActivity"></activity>
+        <activity android:name=".RunningTripActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"></activity>
     </application>
 
 </manifest>
