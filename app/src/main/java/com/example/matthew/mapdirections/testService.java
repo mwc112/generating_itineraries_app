@@ -1,5 +1,6 @@
 package com.example.matthew.mapdirections;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -33,10 +34,10 @@ public class testService extends Service {
     private String[] dests;
     private int[][] startEndtimes;
     private int[] timeToLeave;
-    private boolean travelling = false;
+    private boolean travelling = true;
     private int waypoint = 0;
 
-    private RequestQueue queue;
+    protected RequestQueue queue;
 
     public testService() {
     }
@@ -47,21 +48,10 @@ public class testService extends Service {
 
         LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 
-        /*LocationListener locationListener = new LocationListener() {
+        LocationListener locationListener = new LocationListenerExtended(this) {
             @Override
             public void onLocationChanged(Location location) {
-                StringRequest request = new StringRequest(Request.Method.POST, "http://www.doc.ic.ac.uk/~mwc112/closest_places.php" +
-                        "?lat_lng=" + location.toString(), new ListenerExtended<String>(this) {
-                    @Override
-                    public void onResponse(String response) {
-                        setPlaceToGo(response);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                });
-                queue.add(request);
+                handleLocChange(location);
             }
 
             @Override
@@ -78,7 +68,12 @@ public class testService extends Service {
             public void onProviderDisabled(String provider) {
 
             }
-        }*/
+        };
+
+        try {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        }
+        catch(SecurityException e) {}
     }
 
     @Override
@@ -157,4 +152,37 @@ public class testService extends Service {
         NotificationManager notman = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         notman.notify(NOTIFICATION_ID, mBuilder.build());
     }
+
+    protected void handleLocChange(Location location) {
+        StringRequest request = new StringRequest(Request.Method.GET, Uri.parse("http://www.doc.ic.ac.uk/~mwc112/closest_places.php" +
+                "?lat_lng=" + location.getLatitude() + "," + location.getLongitude()).toString(), new ListenerExtended<String>(this) {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray places = new JSONArray(response);
+                    for(int i = 0; i < places.length(); i++) {
+                        if(places.get(i) == dests[waypoint]) {
+                            if(i == dests.length) {}
+                                //TODO
+                                //reachedFinalWaypoint();
+                            else {
+                                //disableLocationUpdates();
+                                //enableTimerForNextDest();
+                                travelling = false;
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch(Exception e) {}
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        queue.add(request);
+    }
+
 }
