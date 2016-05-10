@@ -46,6 +46,8 @@ public class testService extends Service {
 
     protected RequestQueue queue;
 
+    private LocationListener locationListener;
+
     public testService() {
     }
 
@@ -53,9 +55,7 @@ public class testService extends Service {
     public void onCreate() {
         queue = Volley.newRequestQueue(this);
 
-        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-
-        LocationListener locationListener = new LocationListenerExtended(this) {
+        locationListener = new LocationListenerExtended(this) {
             @Override
             public void onLocationChanged(Location location) {
                 handleLocChange(location);
@@ -76,11 +76,6 @@ public class testService extends Service {
 
             }
         };
-
-        try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        }
-        catch(SecurityException e) {}
     }
 
     @Override
@@ -106,6 +101,14 @@ public class testService extends Service {
                 Intent actIntent = new Intent(c, RunningTripActivity.class);
                 actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(actIntent);
+
+                LocationManager locationManager = (LocationManager) c.getSystemService(LOCATION_SERVICE);
+
+                try {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                }
+                catch(SecurityException e) {}
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -190,9 +193,10 @@ public class testService extends Service {
                                 //TODO
                                 //reachedFinalWaypoint();
                             else {
-                                //disableLocationUpdates();
+                                disableLocUpdates();
                                 //enableTimerForNextDest();
-                                //travelling = false;
+                                travelling = false;
+                                //switchToAtLoc
                             }
                             break;
                         }
@@ -211,6 +215,19 @@ public class testService extends Service {
 
     public String getRoute() {
         return route;
+    }
+
+    private void disableLocUpdates() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+
+        try {
+            locationManager.removeUpdates(locationListener);
+        }
+        catch(SecurityException e) {}
+    }
+
+    private void enableTimerForNextDest() {
+
     }
 
 }
