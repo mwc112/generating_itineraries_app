@@ -43,6 +43,8 @@ public class RunningTripActivity extends AppCompatActivity {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 boundService = ((testService.TestBinder)service).getService();
+                boundService.setRunningTripActivity(RunningTripActivity.this);
+                boundService.setIsShowing(true);
             }
 
             @Override
@@ -60,6 +62,7 @@ public class RunningTripActivity extends AppCompatActivity {
         super.onStop();
         if(isBound) {
             boundService.repushNotification();
+            boundService.setIsShowing(false);
             unbindService(connection);
             isBound = false;
         }
@@ -77,7 +80,7 @@ public class RunningTripActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 webView.evaluateJavascript("initMap();", null);
                 //TODO: Does not actually draw route
-                webView.evaluateJavascript("draw_route(" + boundService.getRoute() + ");",null);
+                webView.evaluateJavascript("draw_route(" + boundService.getRoute() + ");", null);
             }
         });
     }

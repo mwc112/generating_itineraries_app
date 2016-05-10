@@ -42,17 +42,27 @@ public class testService extends Service {
     private int waypoint = 0;
     private String hotel;
 
+    private boolean isShowing = true;
+
     private String route;
+
+    private RunningTripActivity runningTripActivity;
+    private RunningTripAtLocActivity runningTripAtLocActivity;
 
     protected RequestQueue queue;
 
     private LocationListener locationListener;
+
+    private PendingIntent pendingIntent;
+
+    private double[] latLng;
 
     public testService() {
     }
 
     @Override
     public void onCreate() {
+        latLng = new double[2];
         queue = Volley.newRequestQueue(this);
 
         locationListener = new LocationListenerExtended(this) {
@@ -105,7 +115,7 @@ public class testService extends Service {
                 LocationManager locationManager = (LocationManager) c.getSystemService(LOCATION_SERVICE);
 
                 try {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0, locationListener);
                 }
                 catch(SecurityException e) {}
 
@@ -121,7 +131,13 @@ public class testService extends Service {
                 "?place_id=" + dests[0], new ListenerExtended<String>(this) {
             @Override
             public void onResponse(String response) {
-                setPlaceToGo(response);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    setPlaceToGo(jsonObject.getString("name"));
+                    latLng[0] = jsonObject.getDouble("latitude");
+                    latLng[1] = jsonObject.getDouble("longitude");
+                }
+                catch (Exception e) {}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -129,6 +145,9 @@ public class testService extends Service {
             }
         });
         queue.add(request);
+
+        Intent runningIntent = new Intent(this, RunningTripActivity.class);
+        pendingIntent = PendingIntent.getActivity(this,0,runningIntent,0);
     }
 
     public String getTimeToLeaveNiceFormat() {
@@ -167,9 +186,6 @@ public class testService extends Service {
     }
 
     public void repushNotification() {
-        Intent intent = new Intent(this, RunningTripActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
-
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.common_google_signin_btn_icon_light)
                 .setContentTitle(NOTIFICATION_TITLE)
@@ -181,36 +197,24 @@ public class testService extends Service {
     }
 
     protected void handleLocChange(Location location) {
-        StringRequest request = new StringRequest(Request.Method.GET, Uri.parse("http://www.doc.ic.ac.uk/~mwc112/closest_places.php" +
-                "?lat_lng=" + location.getLatitude() + "," + location.getLongitude()).toString(), new ListenerExtended<String>(this) {
-            @Override
-            public void onResponse(String response) {
                 try {
-                    JSONArray places = new JSONArray(response);
-                    for(int i = 0; i < places.length(); i++) {
-                        if(places.get(i) == dests[waypoint]) {
-                            if(i == dests.length) {}
+                    double dist = computeDistance(location.getLatitude(), location.getLongitude());
+                        if(dist < 0.25) {
+                            if(waypoint == dests.length) {}
                                 //TODO
                                 //reachedFinalWaypoint();
                             else {
                                 disableLocUpdates();
                                 //enableTimerForNextDest();
                                 travelling = false;
-                                //switchToAtLoc
+                                if(isShowing)
+                                    switchToAtLoc();
+                                else
+                                    switchNotDetails();
                             }
-                            break;
                         }
-                    }
                 }
                 catch(Exception e) {}
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        queue.add(request);
     }
 
     public String getRoute() {
@@ -228,6 +232,57 @@ public class testService extends Service {
 
     private void enableTimerForNextDest() {
 
+    }
+
+    public void setRunningTripActivity(RunningTripActivity activity) {
+        this.runningTripActivity = activity;
+    }
+
+    public void setRunningTripAtLocActivity(RunningTripAtLocActivity activity) {
+        this.runningTripAtLocActivity = activity;
+    }
+
+    private void switchToAtLoc() {
+        Intent intent = new Intent(this, RunningTripAtLocActivity.class);
+        startActivity(intent);
+        runningTripActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                runningTripActivity.finish();
+            }
+        });
+    }
+
+    public void setIsShowing(boolean showing) {
+        this.isShowing = showing;
+    }
+
+    private void switchNotDetails() {
+        setPlaceToGo("ARRIVED AT LOCATION");
+        //TODO: change pending intent once arrived
+        //Intent runningIntent = new Intent(this, RunningTripActivity.class);
+        //pendingIntent = PendingIntent.getActivity(this,0,runningIntent,0);
+        repushNotification();
+    }
+
+    private double computeDistance(double lat, double lng) {
+        int R = 6371;
+        double dLat = degToRad(lat - latLng[0]);
+        double dLng = degToRad(lng - latLng[1]);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(degToRad(latLng[0])) * Math.cos(degToRad(lat)) *
+                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double d = R * c; //Distance in km
+
+        return d;
+    }
+
+    private double degToRad(double deg) {
+        return deg * (Math.PI / 180.0);
     }
 
 }
