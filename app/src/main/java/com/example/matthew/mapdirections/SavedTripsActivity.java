@@ -138,9 +138,6 @@ public class SavedTripsActivity extends AppCompatActivity {
                 catch (Exception e) {}
             }
         }).start();
-
-        Intent intent = new Intent(this, RunningTripActivity.class);
-        startActivity(intent);
         finish();
     }
 }

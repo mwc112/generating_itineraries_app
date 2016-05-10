@@ -13,6 +13,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -26,6 +27,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
+import java.net.URLEncoder;
+
 public class testService extends Service {
 
     private int NOTIFICATION_ID = 1;
@@ -36,6 +40,9 @@ public class testService extends Service {
     private int[] timeToLeave;
     private boolean travelling = true;
     private int waypoint = 0;
+    private String hotel;
+
+    private String route;
 
     protected RequestQueue queue;
 
@@ -85,13 +92,30 @@ public class testService extends Service {
     private void handleCommand(Intent intent) {
         this.dests = intent.getStringArrayExtra(RunningTripActivity.RUNNING_TRIP_WAYPOINTS);
         this.startEndtimes = (int[][])intent.getSerializableExtra(RunningTripActivity.RUNNING_TRIP_TIMES);
+        this.hotel = intent.getStringExtra(RunningTripActivity.RUNNING_TRIP_HOTEL);
         this.timeToLeave = new int[2];
         this.timeToLeave[0] = startEndtimes[0][0];
         this.timeToLeave[1] = startEndtimes[0][1];
         setTimeToLeave(getTimeToLeaveNiceFormat());
 
+        StringRequest request1 = new StringRequest(Request.Method.GET, "http://www.doc.ic.ac.uk/~mwc112/get_route.php" +
+                "?origin=" + dests[1] + "&destination=" + Uri.parse(dests[0]).toString(), new ListenerExtended<String>(this) {
+            @Override
+            public void onResponse(String response) {
+                route = response.substring(1);
+                Intent actIntent = new Intent(c, RunningTripActivity.class);
+                actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(actIntent);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        queue.add(request1);
+
         StringRequest request = new StringRequest(Request.Method.POST, "http://www.doc.ic.ac.uk/~mwc112/place_info.php" +
-                "?place_id=" + dests[waypoint], new ListenerExtended<String>(this) {
+                "?place_id=" + dests[0], new ListenerExtended<String>(this) {
             @Override
             public void onResponse(String response) {
                 setPlaceToGo(response);
@@ -168,7 +192,7 @@ public class testService extends Service {
                             else {
                                 //disableLocationUpdates();
                                 //enableTimerForNextDest();
-                                travelling = false;
+                                //travelling = false;
                             }
                             break;
                         }
@@ -183,6 +207,10 @@ public class testService extends Service {
             }
         });
         queue.add(request);
+    }
+
+    public String getRoute() {
+        return route;
     }
 
 }
