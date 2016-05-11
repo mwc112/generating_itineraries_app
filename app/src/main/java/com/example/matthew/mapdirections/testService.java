@@ -1,10 +1,14 @@
 package com.example.matthew.mapdirections;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,6 +16,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -57,6 +62,8 @@ public class testService extends Service {
 
     private double[] latLng;
 
+    private int[] timesToStay;
+
     public testService() {
     }
 
@@ -101,6 +108,7 @@ public class testService extends Service {
         this.timeToLeave = new int[2];
         this.timeToLeave[0] = startEndtimes[0][0];
         this.timeToLeave[1] = startEndtimes[0][1];
+        this.timesToStay = intent.getIntArrayExtra(RunningTripActivity.RUNNING_TRIP_TIME_TO_STAY);
         setTimeToLeave(getTimeToLeaveNiceFormat());
 
         StringRequest request1 = new StringRequest(Request.Method.GET, "http://www.doc.ic.ac.uk/~mwc112/get_route.php" +
@@ -205,7 +213,7 @@ public class testService extends Service {
                                 //reachedFinalWaypoint();
                             else {
                                 disableLocUpdates();
-                                //enableTimerForNextDest();
+                                setAlarmForIn(timesToStay[waypoint]);
                                 travelling = false;
                                 if(isShowing)
                                     switchToAtLoc();
@@ -230,10 +238,6 @@ public class testService extends Service {
         catch(SecurityException e) {}
     }
 
-    private void enableTimerForNextDest() {
-
-    }
-
     public void setRunningTripActivity(RunningTripActivity activity) {
         this.runningTripActivity = activity;
     }
@@ -243,6 +247,10 @@ public class testService extends Service {
     }
 
     private void switchToAtLoc() {
+        setPlaceToGo("ARRIVED AT LOCATION");
+        setTimeToLeave("In " + Integer.toString(timesToStay[waypoint]) + " hours");
+        Intent runningIntent = new Intent(this, RunningTripAtLocActivity.class);
+        pendingIntent = PendingIntent.getActivity(this,0,runningIntent,0);
         Intent intent = new Intent(this, RunningTripAtLocActivity.class);
         startActivity(intent);
         runningTripActivity.runOnUiThread(new Runnable() {
@@ -259,6 +267,9 @@ public class testService extends Service {
 
     private void switchNotDetails() {
         setPlaceToGo("ARRIVED AT LOCATION");
+        setTimeToLeave("In " + Integer.toString(timesToStay[waypoint]) + " hours");
+        Intent runningIntent = new Intent(this, RunningTripAtLocActivity.class);
+        pendingIntent = PendingIntent.getActivity(this,0,runningIntent,0);
         //TODO: change pending intent once arrived
         //Intent runningIntent = new Intent(this, RunningTripActivity.class);
         //pendingIntent = PendingIntent.getActivity(this,0,runningIntent,0);
@@ -283,6 +294,34 @@ public class testService extends Service {
 
     private double degToRad(double deg) {
         return deg * (Math.PI / 180.0);
+    }
+
+    private void setAlarmForIn(int hours) {
+        IntentFilter intentFilter = new IntentFilter("com.example.Receiver");
+        Receiver receiver = new Receiver();
+        registerReceiver(receiver, intentFilter);
+
+        Intent intent = new Intent();
+        intent.setAction("com.example.Receiver");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,intent, 0);
+
+        //TODO: Working on this atm
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
+                            10000, pendingIntent);
+
+    }
+
+    private class Receiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(!isShowing) {
+                Intent newIntent = new Intent(testService.this, RunningTripAtLocActivity.class);
+                startActivity(newIntent);
+
+            }
+        }
     }
 
 }

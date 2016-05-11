@@ -1,5 +1,6 @@
 package com.example.matthew.mapdirections;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.DocumentsContract;
@@ -183,6 +184,15 @@ public class WaypointsMapActivity extends AppCompatActivity {
                 Element waypoint = d.createElement("waypoint");
                 waypoints.appendChild(waypoint);
                 waypoint.setTextContent(waypoints_actual[i][1]);
+            }
+
+            Element time_to_stay = d.createElement("time_to_stay");
+            trip.appendChild(time_to_stay);
+
+            for(int i = 0; i < num_waypoints; i++) {
+                Element time = d.createElement("time");
+                time_to_stay.appendChild(time);
+                time.setTextContent(waypoints_actual[i][3]);
             }
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();

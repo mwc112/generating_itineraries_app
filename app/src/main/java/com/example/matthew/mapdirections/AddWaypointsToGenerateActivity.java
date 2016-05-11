@@ -178,6 +178,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                         child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_WAYPOINTS, waypoints);
                         child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_NUM_WAYPOINTS, num_waypoints);
                         child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_HOTEL, "Buckingham Palace, London");
+
                         startActivityForResult(child_intent, WAYPOINT_MAP_REQUEST_CODE);
                     }
 

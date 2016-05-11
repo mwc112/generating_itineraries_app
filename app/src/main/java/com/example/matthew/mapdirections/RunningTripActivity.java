@@ -17,6 +17,7 @@ public class RunningTripActivity extends AppCompatActivity {
     public static String RUNNING_TRIP_HOTEL = "com.example.matthew.RUNNING_TRIP_HOTEL";
     public static String RUNNING_TRIP_WAYPOINTS = "com.example.matthew.RUNNING_TRIP_WAYPOINTS";
     public static String RUNNING_TRIP_TIMES = "com.example.matthew.RUNNING_TRIP_TIMES";
+    public static String RUNNING_TRIP_TIME_TO_STAY = "com.example.matthew.RUNNING_TRIP_TIME_TO_STAY";
 
     private testService boundService;
     private ServiceConnection connection;

@@ -122,6 +122,11 @@ public class SavedTripsActivity extends AppCompatActivity {
                     for(int i = 0; i < waypoint_nodes.getLength(); i++) {
                         waypoints[i] = waypoint_nodes.item(i).getFirstChild().getNodeValue();
                     }
+                    NodeList times_to_stay_nodes = selectedChild.getChildNodes().item(4).getChildNodes();
+                    int[] times_to_stay = new int[times_to_stay_nodes.getLength()];
+                    for(int i = 0; i < times_to_stay_nodes.getLength(); i++) {
+                        times_to_stay[i] = Integer.parseInt(times_to_stay_nodes.item(i).getFirstChild().getNodeValue());
+                    }
                     int[][] time = new int[2][2];
                     Node startTime = selectedChild.getChildNodes().item(1);
                     Node endTime = selectedChild.getChildNodes().item(2);
@@ -133,6 +138,7 @@ public class SavedTripsActivity extends AppCompatActivity {
                     intent.putExtra(RunningTripActivity.RUNNING_TRIP_HOTEL, hotel);
                     intent.putExtra(RunningTripActivity.RUNNING_TRIP_WAYPOINTS, waypoints);
                     intent.putExtra(RunningTripActivity.RUNNING_TRIP_TIMES, time);
+                    intent.putExtra(RunningTripActivity.RUNNING_TRIP_TIME_TO_STAY, times_to_stay);
                     startService(intent);
                 }
                 catch (Exception e) {}
