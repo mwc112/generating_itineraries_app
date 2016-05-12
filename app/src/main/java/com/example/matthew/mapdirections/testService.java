@@ -120,9 +120,6 @@ public class testService extends Service {
             @Override
             public void onResponse(String response) {
                 route = response.substring(1);
-                Intent actIntent = new Intent(c, RunningTripActivity.class);
-                actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(actIntent);
 
                 LocationManager locationManager = (LocationManager) c.getSystemService(LOCATION_SERVICE);
 
@@ -148,6 +145,14 @@ public class testService extends Service {
                     setPlaceToGo(jsonObject.getString("name"));
                     latLng[0] = jsonObject.getDouble("latitude");
                     latLng[1] = jsonObject.getDouble("longitude");
+
+                    Intent actIntent = new Intent(c, RunningTripActivity.class);
+                    actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(actIntent);
+
+                    Intent savedIntent = new Intent();
+                    savedIntent.setAction("com.example.SAVEDTRIPSACTIVITY");
+                    sendBroadcast(savedIntent);
                 }
                 catch (Exception e) {}
             }
