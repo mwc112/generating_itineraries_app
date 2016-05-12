@@ -17,6 +17,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -44,7 +45,7 @@ public class testService extends Service {
     private int[][] startEndtimes;
     private int[] timeToLeave;
     private boolean travelling = true;
-    private int waypoint = 0;
+    private int waypoint = 1;
     private String hotel;
 
     private boolean isShowing = true;
@@ -63,6 +64,9 @@ public class testService extends Service {
     private double[] latLng;
 
     private int[] timesToStay;
+
+    private Receiver receiver;
+    private Receiver2 receiver2;
 
     public testService() {
     }
@@ -136,7 +140,7 @@ public class testService extends Service {
         queue.add(request1);
 
         StringRequest request = new StringRequest(Request.Method.POST, "http://www.doc.ic.ac.uk/~mwc112/place_info.php" +
-                "?place_id=" + dests[0], new ListenerExtended<String>(this) {
+                "?place_id=" + dests[waypoint], new ListenerExtended<String>(this) {
             @Override
             public void onResponse(String response) {
                 try {
@@ -208,9 +212,26 @@ public class testService extends Service {
                 try {
                     double dist = computeDistance(location.getLatitude(), location.getLongitude());
                         if(dist < 0.25) {
-                            if(waypoint == dests.length) {}
-                                //TODO
-                                //reachedFinalWaypoint();
+                            if(waypoint == dests.length - 1) {
+                                disableLocUpdates();
+                                setPlaceToGo("FINISHED");
+                                setTimeToLeave("");
+                                if(isShowing) {
+                                    runningTripActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            runningTripActivity.finish();
+                                        }
+                                    });
+                                    Intent mainIntent = new Intent(this, RootMenuActivity.class);
+                                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(mainIntent);
+                                }
+                                else {
+                                    repushNotification();
+                                }
+                                stopSelf();
+                            }
                             else {
                                 disableLocUpdates();
                                 setAlarmForIn(timesToStay[waypoint]);
@@ -298,7 +319,10 @@ public class testService extends Service {
 
     private void setAlarmForIn(int hours) {
         IntentFilter intentFilter = new IntentFilter("com.example.Receiver");
-        Receiver receiver = new Receiver();
+        receiver = new Receiver();
+        if(receiver2 != null) {
+            unregisterReceiver(receiver2);
+        }
         registerReceiver(receiver, intentFilter);
 
         Intent intent = new Intent();
@@ -308,7 +332,8 @@ public class testService extends Service {
         //TODO: Working on this atm
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
-                            10000, pendingIntent);
+                //(timesToStay[waypoint] * 3600 * 1000) - (300 * 1000)
+                5000, pendingIntent);
 
     }
 
@@ -316,12 +341,101 @@ public class testService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(!isShowing) {
-                Intent newIntent = new Intent(testService.this, RunningTripAtLocActivity.class);
-                startActivity(newIntent);
+            long[] pattern = {0,400,400,400,400,400,400,400};
 
-            }
+            Vibrator v = (Vibrator) testService.this.getSystemService(testService.this.VIBRATOR_SERVICE);
+            v.vibrate(pattern, -1);
+
+            Intent intent2 = new Intent();
+            intent2.setAction("com.example.Receiver");
+            PendingIntent pendingIntent2 = PendingIntent.getBroadcast(testService.this, 0,intent2, 0);
+
+            IntentFilter intentFilter = new IntentFilter("com.example.Receiver");
+            receiver2 = new Receiver2();
+            unregisterReceiver(receiver);
+            registerReceiver(receiver2, intentFilter);
+
+            AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
+                    5000, pendingIntent2);
         }
     }
 
+    private class Receiver2 extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Vibrator v = (Vibrator) testService.this.getSystemService(testService.this.VIBRATOR_SERVICE);
+            long[] pattern = {0,400,400,400,400,400,400,400,400,400,400,400,400,400,400};
+            v.vibrate(pattern, -1);
+
+            travelling = true;
+            waypoint++;
+            reactToTimer();
+        }
+    }
+
+    private void startLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        try {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0, locationListener);
+        }
+        catch(SecurityException e) {}
+    }
+
+    private void reactToTimer() {
+        StringRequest request = new StringRequest(Request.Method.POST, "http://www.doc.ic.ac.uk/~mwc112/place_info.php" +
+                "?place_id=" + dests[waypoint], new ListenerExtended<String>(this) {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    setPlaceToGo(jsonObject.getString("name"));
+                    latLng[0] = jsonObject.getDouble("latitude");
+                    latLng[1] = jsonObject.getDouble("longitude");
+
+                    StringRequest request = new StringRequest(Request.Method.GET, "http://www.doc.ic.ac.uk/~mwc112/get_route.php" +
+                            "?origin=" + dests[waypoint - 1] + "&destination=" + Uri.parse(dests[waypoint]).toString(), new ListenerExtended<String>(c) {
+                        @Override
+                        public void onResponse(String response) {
+                            startLocation();
+                            //TODO: set time to leave as current time + time to stay
+                            setTimeToLeave("");
+
+                            route = response.substring(1);
+
+                            Intent runningIntent = new Intent(c, RunningTripActivity.class);
+                            pendingIntent = PendingIntent.getActivity(testService.this, 0, runningIntent, 0);
+
+                            if(!isShowing) {
+                                repushNotification();
+                            }
+                            else {
+                                runningTripAtLocActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        runningTripAtLocActivity.finish();
+                                    }
+                                });
+                                Intent actIntent = new Intent(c, RunningTripActivity.class);
+                                actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(actIntent);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                        }
+                    });
+                    queue.add(request);
+                }
+                catch (Exception e) {}
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        queue.add(request);
+    }
 }
