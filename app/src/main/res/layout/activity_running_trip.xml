@@ -7,12 +7,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/layoutRunningTrip">
 
-    <WebView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="460dp"
-        android:id="@+id/webRunningTrip"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="0.05">
 
     <Button
         android:layout_width="wrap_content"
@@ -20,5 +22,14 @@
         android:text="Stop"
         android:id="@+id/btnRunningTripStop"
         android:onClick="onClickRunningTripStop"
-        android:layout_weight="0.05"/>
+        android:layout_weight="0.5"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Swap"
+            android:id="@+id/btnRunningTripSwap"
+            android:layout_weight="0.5"
+            android:onClick="onClickRunningTripSwap" />
+    </LinearLayout>
 </LinearLayout>
