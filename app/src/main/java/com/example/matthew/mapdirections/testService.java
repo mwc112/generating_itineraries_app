@@ -128,6 +128,33 @@ public class testService extends Service {
                 }
                 catch(SecurityException e) {}
 
+                StringRequest request = new StringRequest(Request.Method.POST, "http://www.doc.ic.ac.uk/~mwc112/place_info.php" +
+                        "?place_id=" + dests[waypoint], new ListenerExtended<String>(c) {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            setPlaceToGo(jsonObject.getString("name"));
+                            latLng[0] = jsonObject.getDouble("latitude");
+                            latLng[1] = jsonObject.getDouble("longitude");
+
+                            Intent actIntent = new Intent(c, RunningTripActivity.class);
+                            actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(actIntent);
+
+                            Intent savedIntent = new Intent();
+                            savedIntent.setAction("com.example.SAVEDTRIPSACTIVITY");
+                            sendBroadcast(savedIntent);
+                        }
+                        catch (Exception e) {}
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+                queue.add(request);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -135,33 +162,6 @@ public class testService extends Service {
             }
         });
         queue.add(request1);
-
-        StringRequest request = new StringRequest(Request.Method.POST, "http://www.doc.ic.ac.uk/~mwc112/place_info.php" +
-                "?place_id=" + dests[waypoint], new ListenerExtended<String>(this) {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    setPlaceToGo(jsonObject.getString("name"));
-                    latLng[0] = jsonObject.getDouble("latitude");
-                    latLng[1] = jsonObject.getDouble("longitude");
-
-                    Intent actIntent = new Intent(c, RunningTripActivity.class);
-                    actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(actIntent);
-
-                    Intent savedIntent = new Intent();
-                    savedIntent.setAction("com.example.SAVEDTRIPSACTIVITY");
-                    sendBroadcast(savedIntent);
-                }
-                catch (Exception e) {}
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-        queue.add(request);
 
         Intent runningIntent = new Intent(this, RunningTripActivity.class);
         pendingIntent = PendingIntent.getActivity(this,0,runningIntent,0);
