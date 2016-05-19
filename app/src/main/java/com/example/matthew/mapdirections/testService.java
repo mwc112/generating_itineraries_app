@@ -67,6 +67,9 @@ public class testService extends Service {
 
     private Receiver receiver;
     private Receiver2 receiver2;
+    private EveryMinuteReceiver everyMinuteReceiver;
+
+    private int timeUntilTravel;
 
     public testService() {
     }
@@ -240,6 +243,8 @@ public class testService extends Service {
                             else {
                                 disableLocUpdates();
                                 setAlarmForIn(timesToStay[waypoint]);
+                                setMinuteNotifAlarm();
+                                //setTimeToLeave(timesToStay);
                                 travelling = false;
                                 if(isShowing)
                                     switchToAtLoc();
@@ -274,7 +279,7 @@ public class testService extends Service {
 
     private void switchToAtLoc() {
         setPlaceToGo("ARRIVED AT LOCATION");
-        setTimeToLeave("In " + Integer.toString(timesToStay[waypoint]) + " hours");
+        setTimeToLeave(Integer.toString(timesToStay[waypoint]) + " minutes remaining");
         Intent runningIntent = new Intent(this, RunningTripAtLocActivity.class);
         pendingIntent = PendingIntent.getActivity(this,0,runningIntent,0);
         Intent intent = new Intent(this, RunningTripAtLocActivity.class);
@@ -293,7 +298,7 @@ public class testService extends Service {
 
     private void switchNotDetails() {
         setPlaceToGo("ARRIVED AT LOCATION");
-        setTimeToLeave("In " + Integer.toString(timesToStay[waypoint]) + " hours");
+        setTimeToLeave(Integer.toString(timesToStay[waypoint]) + " minutes remaining");
         Intent runningIntent = new Intent(this, RunningTripAtLocActivity.class);
         pendingIntent = PendingIntent.getActivity(this,0,runningIntent,0);
         //TODO: change pending intent once arrived
@@ -334,11 +339,11 @@ public class testService extends Service {
         intent.setAction("com.example.Receiver");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,intent, 0);
 
-        //TODO: Working on this atm
+        //TODO: Change to be minutes rather than hours
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
-                //(timesToStay[waypoint] * 3600 * 1000) - (300 * 1000)
-                5000, pendingIntent);
+                (timesToStay[waypoint] * 3600 * 1000) - (300000), pendingIntent);
+                //5000, pendingIntent);
 
     }
 
@@ -362,7 +367,7 @@ public class testService extends Service {
 
             AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
-                    5000, pendingIntent2);
+                    300000, pendingIntent2);
         }
     }
 
@@ -443,4 +448,45 @@ public class testService extends Service {
         });
         queue.add(request);
     }
+
+    private void setMinuteNotifAlarm() {
+        timeUntilTravel = timesToStay[waypoint];
+        everyMinuteReceiver = new EveryMinuteReceiver();
+
+        IntentFilter intentFilter = new IntentFilter("com.example.testServiceMinuteNotif");
+        registerReceiver(everyMinuteReceiver, intentFilter);
+
+        Intent intent = new Intent();
+        intent.setAction("com.example.testServiceMinuteNotif");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(testService.this, 0,intent, 0);
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
+                60000, pendingIntent);
+    }
+
+    private class EveryMinuteReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            timeUntilTravel -= 1;
+            NOTIFICATION_CONTENT = Integer.toString(timeUntilTravel) + " minutes remaining";
+
+            if(!isShowing)
+                repushNotification();
+
+            if(timeUntilTravel == 1) {
+                unregisterReceiver(everyMinuteReceiver);
+                return;
+            }
+            Intent intent2 = new Intent();
+            intent2.setAction("com.example.testServiceMinuteNotif");
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(testService.this, 0,intent2, 0);
+
+            AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
+                    60000, pendingIntent);
+        }
+    }
+
 }

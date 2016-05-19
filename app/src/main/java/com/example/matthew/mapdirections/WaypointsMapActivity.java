@@ -192,7 +192,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
             for(int i = 0; i < num_waypoints; i++) {
                 Element time = d.createElement("time");
                 time_to_stay.appendChild(time);
-                time.setTextContent(waypoints_actual[i][3]);
+                time.setTextContent(Integer.toString(Integer.parseInt(waypoints_actual[i][3]) * 60));
             }
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
