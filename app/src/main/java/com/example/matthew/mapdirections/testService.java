@@ -71,6 +71,8 @@ public class testService extends Service {
 
     private int timeUntilTravel;
 
+    private String nextWaypointName;
+
     public testService() {
     }
 
@@ -138,6 +140,7 @@ public class testService extends Service {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             setPlaceToGo(jsonObject.getString("name"));
+                            nextWaypointName = jsonObject.getString("name");
                             latLng[0] = jsonObject.getDouble("latitude");
                             latLng[1] = jsonObject.getDouble("longitude");
 
@@ -474,6 +477,16 @@ public class testService extends Service {
 
             if(!isShowing)
                 repushNotification();
+            else {
+                runningTripAtLocActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TextView)testService.this.runningTripAtLocActivity.findViewById(R.id.txtRunningTripAtLocTime)).setText(Integer.toString(timeUntilTravel) +
+                                " minutes reamining");
+                    }
+                });
+            }
+
 
             if(timeUntilTravel == 1) {
                 unregisterReceiver(everyMinuteReceiver);
@@ -487,6 +500,14 @@ public class testService extends Service {
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
                     60000, pendingIntent);
         }
+    }
+
+    public String getNextWaypointName() {
+        return nextWaypointName;
+    }
+
+    public int getTimeUntilTravel() {
+        return timeUntilTravel;
     }
 
 }

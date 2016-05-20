@@ -6,6 +6,8 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 public class RunningTripAtLocActivity extends AppCompatActivity {
 
@@ -24,6 +26,8 @@ public class RunningTripAtLocActivity extends AppCompatActivity {
                 boundService = ((testService.TestBinder)service).getService();
                 boundService.setRunningTripAtLocActivity(RunningTripAtLocActivity.this);
                 boundService.setIsShowing(true);
+                ((TextView)findViewById(R.id.txtRunningTripAtLocInfo)).setText(boundService.getNextWaypointName());
+                ((TextView)findViewById(R.id.txtRunningTripAtLocTime)).setText(boundService.getTimeUntilTravel() + " minutes remaining");
             }
 
             @Override
@@ -49,5 +53,15 @@ public class RunningTripAtLocActivity extends AppCompatActivity {
         super.onStart();
         bindService(new Intent(this, testService.class), connection, BIND_AUTO_CREATE);
         isBound = true;
+    }
+
+    public void onClickRunningTripAtLocStop(View view) {
+        Intent intent = new Intent(this, testService.class);
+        stopService(intent);
+        unbindService(connection);
+        isBound = false;
+        Intent main_intent = new Intent(this, RootMenuActivity.class);
+        finish();
+        startActivity(main_intent);
     }
 }
