@@ -225,8 +225,6 @@ public class testService extends Service {
                         if(dist < 0.25) {
                             if(waypoint == dests.length - 1) {
                                 disableLocUpdates();
-                                setPlaceToGo("FINISHED");
-                                setTimeToLeave("");
                                 if(isShowing) {
                                     runningTripActivity.runOnUiThread(new Runnable() {
                                         @Override
@@ -234,19 +232,20 @@ public class testService extends Service {
                                             runningTripActivity.finish();
                                         }
                                     });
-                                    Intent mainIntent = new Intent(this, RootMenuActivity.class);
-                                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(mainIntent);
                                 }
                                 else {
-                                    repushNotification();
+                                    NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                                    notificationManager.cancel(NOTIFICATION_ID);
                                 }
+                                Intent mainIntent = new Intent(this, RootMenuActivity.class);
+                                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(mainIntent);
                                 stopSelf();
                             }
                             else {
                                 disableLocUpdates();
                                 setAlarmForIn(timesToStay[waypoint]);
-                                setMinuteNotifAlarm();
+                                //setMinuteNotifAlarm();
                                 //setTimeToLeave(timesToStay);
                                 travelling = false;
                                 if(isShowing)
@@ -345,8 +344,8 @@ public class testService extends Service {
         //TODO: Change to be minutes rather than hours
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
-                (timesToStay[waypoint] * 3600 * 1000) - (300000), pendingIntent);
-                //5000, pendingIntent);
+                //(timesToStay[waypoint] * 3600 * 1000) - (300000), pendingIntent);
+                5000, pendingIntent);
 
     }
 
@@ -370,7 +369,8 @@ public class testService extends Service {
 
             AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
-                    300000, pendingIntent2);
+                    //300000, pendingIntent2);
+                    5000, pendingIntent2);
         }
     }
 
