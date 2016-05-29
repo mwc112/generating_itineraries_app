@@ -1,6 +1,7 @@
 package com.example.matthew.mapdirections;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -21,6 +23,14 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,6 +54,7 @@ public class SavedTripsActivity extends AppCompatActivity {
     private LinearLayout linearLayout;
     private ScrollView scrllTrips;
     private BroadcastReceiver receiver;
+    private RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +73,8 @@ public class SavedTripsActivity extends AppCompatActivity {
 
         trips = new String[20];
         viewTrips = new View[20];
+
+        queue = Volley.newRequestQueue(this);
 
         try {
             final String filename = "trips.xml";
@@ -189,6 +202,85 @@ public class SavedTripsActivity extends AppCompatActivity {
             SavedTripsActivity.this.finish();
         }
     }
+
+    /*public void onClickSavedTripsUpload(View view) {
+        Button uploadBtn = (Button) findViewById(R.id.btnSavedTripsUpload);
+        linearLayout.removeView(uploadBtn);
+        ProgressBar progressBar = new ProgressBar(this);
+        progressBar.setIndeterminate(true);
+        ((LinearLayout)findViewById(R.id.layoutSavedTripsBtns)).addView(progressBar, 1);
+
+        try {
+            final String filename = "trips.xml";
+            FileInputStream fis = this.openFileInput(filename);
+            InputStreamReader isr = new InputStreamReader(fis);
+            char[] inputBuffer = new char[fis.available()];
+            isr.read(inputBuffer);
+            String input = new String(inputBuffer);
+            isr.close();
+            fis.close();
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes("UTF-8"));
+            //File file = new File(this.getFilesDir(), filename);
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document d = db.parse(bais);
+
+            Node root = d.getFirstChild();
+            NodeList children = root.getChildNodes();
+
+            Node selectedChild = children.item(selected);
+            String hotel = selectedChild.getChildNodes().item(0).getFirstChild().getNodeValue();
+            NodeList waypoint_nodes = selectedChild.getChildNodes().item(3).getChildNodes();
+            String[] waypoints = new String[waypoint_nodes.getLength()];
+            for (int i = 0; i < waypoint_nodes.getLength(); i++) {
+                waypoints[i] = waypoint_nodes.item(i).getFirstChild().getNodeValue();
+            }
+            NodeList times_to_stay_nodes = selectedChild.getChildNodes().item(4).getChildNodes();
+            int[] times_to_stay = new int[times_to_stay_nodes.getLength()];
+            for (int i = 0; i < times_to_stay_nodes.getLength(); i++) {
+                times_to_stay[i] = Integer.parseInt(times_to_stay_nodes.item(i).getFirstChild().getNodeValue());
+            }
+            int[][] time = new int[2][2];
+            Node startTime = selectedChild.getChildNodes().item(1);
+            Node endTime = selectedChild.getChildNodes().item(2);
+            time[0][0] = Integer.parseInt(startTime.getFirstChild().getFirstChild().getNodeValue());
+            time[0][1] = Integer.parseInt(startTime.getLastChild().getFirstChild().getNodeValue());
+            time[1][0] = Integer.parseInt(endTime.getFirstChild().getFirstChild().getNodeValue());
+            time[1][1] = Integer.parseInt(endTime.getLastChild().getFirstChild().getNodeValue());
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("http://139.59.188.237/save_trip?hotel=");
+            stringBuilder.append(hotel + "&route=a&waypoints=");
+            stringBuilder.append(new JSONArray(waypoints).toString() + "&times=");
+            stringBuilder.append(new JSONArray(times_to_stay).toString() + "&transport_method=public&creator=a&start_date_time=");
+            stringBuilder.append("a");
+            String s = stringBuilder.toString();
+
+            StringRequest request = new StringRequest(Request.Method.POST, Uri.parse(s).toString(),
+                    new ListenerExtended<String>(this) {
+                        @Override
+                        public void onResponse(String response) {
+                            Activity a = (Activity) c;
+                            if(response.equals("OK")) {
+
+                                Button uploadBtn = (Button) a.findViewById(R.id.btnSavedTripsUpload);
+
+                            }
+                            else if(response.equals("Bad")) {
+
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    });
+        }
+        catch (Exception e){}
+    }*/
+
 
 
 }

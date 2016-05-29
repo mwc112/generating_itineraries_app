@@ -17,6 +17,13 @@
         android:id="@+id/scrllSavedTripsTrips">
     </ScrollView>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload"
+        android:id="@+id/btnSavedTripsUpload"
+        android:onClick="onClickSavedTripsUpload" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
