@@ -5,4 +5,5 @@
     <string name="title_activity_root_menu">Main Menu</string>
     <string name="add_waypoints_to_gen_temp">It worked</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="google_app_id">684388582015</string>
 </resources>
