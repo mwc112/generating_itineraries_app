@@ -3,6 +3,7 @@ package com.example.matthew.mapdirections;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -125,13 +126,13 @@ public class LoginActivity extends AppCompatActivity {
                 final String email = ((EditText) findViewById(R.id.txtLoginEmail)).getText().toString();
                 final String password = ((EditText) findViewById(R.id.txtLoginPassword)).getText().toString();
 
-                StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.116.27/app_login?email=" + email + "&password="
-                        + password,
+                StringRequest request = new StringRequest(Request.Method.GET, Uri.parse("http://178.62.116.27/app_login?email=" + email + "&password="
+                                + password + "&app_id=" + ((MyApplication) getApplication()).getUnique_id()).toString(),
                         new ListenerExtended<String>(LoginActivity.this) {
                             @Override
-                            public void onResponse(String response) {
-                                if (response.equals("Bad Response")) {
-                                    ((Activity)c).runOnUiThread(new Runnable() {
+                            public void onResponse(final String response) {
+                                if (response.equals("Bad Request")) {
+                                    ((Activity) c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             Button b = createLoginButton();
@@ -139,11 +140,12 @@ public class LoginActivity extends AppCompatActivity {
                                             LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutLogin);
                                             linearLayout.removeView(progressBar);
                                             linearLayout.addView(b, 3);
+                                            //TODO: Show some kind of message when it fails
                                         }
                                     });
                                 } else {
                                     ((MyApplication)getApplication()).setLoginToken(response);
-                                    ((Activity)c).runOnUiThread(new Runnable() {
+                                    ((Activity) c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             Intent intent = new Intent(c, RootMenuActivity.class);
@@ -155,13 +157,19 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         },
-                        new ErrorListenerExtended(LoginActivity.this){
+                        new ErrorListenerExtended(LoginActivity.this) {
                             @Override
-                            public void onErrorResponse (VolleyError error){
+                            public void onErrorResponse(VolleyError error) {
                                 Activity a = (Activity) c;
                                 a.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Button b = createLoginButton();
+                                        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBarLogin);
+                                        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutLogin);
+                                        linearLayout.removeView(progressBar);
+                                        linearLayout.addView(b, 3);
+                                        //TODO: Show some kind of message when it fails
                                     }
                                 });
                             }
