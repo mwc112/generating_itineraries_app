@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if(((MyApplication)getApplication()).getShouldLogIn())
+        if(!((MyApplication)getApplication()).getLoginToken().equals(""))
             isLoginValid();
     }
 
@@ -156,7 +156,6 @@ public class LoginActivity extends AppCompatActivity {
                                     ((Activity) c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            ((MyApplication)getApplication()).setShouldLogIn(true);
                                             Intent intent = new Intent(c, RootMenuActivity.class);
                                             startActivity(intent);
                                             ((Activity) c).finish();
