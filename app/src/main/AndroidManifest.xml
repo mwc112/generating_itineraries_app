@@ -35,8 +35,7 @@
         <activity android:name=".GenerateShowDayItinaryActivity" />
         <activity
             android:name=".RootMenuActivity"
-            android:label="@string/title_activity_root_menu">
-        </activity>
+            android:label="@string/title_activity_root_menu"></activity>
         <activity android:name=".ChooseCreationMethodActivity" />
         <activity android:name=".ManualCreationTripActivity" />
         <activity
@@ -56,8 +55,11 @@
             android:launchMode="singleTask"
             android:taskAffinity="" />
         <activity android:name=".RunningTripAtLocActivity" />
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".LoginActivity"
             android:launchMode="singleInstance">
+        </activity>
+        <activity android:name=".SelectDateActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

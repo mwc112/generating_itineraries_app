@@ -10,6 +10,12 @@
     android:orientation="vertical"
     tools:context="com.example.matthew.mapdirections.AddWaypoints">
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Date"
+        android:id="@+id/btnAddWaypointGenDate"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     private int selected = -1;
     private int[] start_time;
     private int[] end_time;
+    private int[] date;
 
     private final int NEW_WAYPOINT_REQUEST_CODE = 0;
     private final int WAYPOINT_MAP_REQUEST_CODE = 1;
