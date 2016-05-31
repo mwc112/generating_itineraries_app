@@ -31,4 +31,11 @@
         android:layout_height="wrap_content"
         android:text="Account"
         android:id="@+id/btnRootMenuAccount" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:id="@+id/btnRootMenuLogout"
+        android:onClick="onClickRootLogout"/>
 </LinearLayout>
