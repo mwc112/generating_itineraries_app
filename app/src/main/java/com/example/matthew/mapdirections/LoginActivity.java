@@ -41,6 +41,7 @@ import javax.net.ssl.TrustManagerFactory;
 public class LoginActivity extends AppCompatActivity {
 
     private static char[] KEYSTORE_PASSWORD = "password".toCharArray();
+    private RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,14 @@ public class LoginActivity extends AppCompatActivity {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutLogin);
         Button button = createLoginButton();
         linearLayout.addView(button);
+        queue = Volley.newRequestQueue(LoginActivity.this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        isLoginValid();
     }
 
     public void onClickLogin(View view) {
@@ -121,13 +130,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 LoginActivity.this.showProgressBar();
 
-                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-
                 final String email = ((EditText) findViewById(R.id.txtLoginEmail)).getText().toString();
                 final String password = ((EditText) findViewById(R.id.txtLoginPassword)).getText().toString();
 
                 StringRequest request = new StringRequest(Request.Method.GET, Uri.parse("http://178.62.116.27/app_login?email=" + email + "&password="
-                                + password + "&app_id=" + ((MyApplication) getApplication()).getUnique_id()).toString(),
+                        + password + "&app_id=" + ((MyApplication) getApplication()).getUnique_id() + "&req_type=token").toString(),
                         new ListenerExtended<String>(LoginActivity.this) {
                             @Override
                             public void onResponse(final String response) {
@@ -144,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                     });
                                 } else {
-                                    ((MyApplication)getApplication()).setLoginToken(response);
+                                    ((MyApplication) getApplication()).setLoginToken(response);
                                     ((Activity) c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -178,6 +185,43 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         return  button;
+    }
+
+    private boolean isLoginValid() {
+
+        StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.116.27/app_login?req_type=Validate&" +
+                "key=" + ((MyApplication) getApplication()).getLoginToken() + "&app_id=" + ((MyApplication)getApplication()).getUnique_id(),
+                new ListenerExtended<String>(this) {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("Valid")) {
+                            ((Activity)c).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(c, RootMenuActivity.class);
+                                    startActivity(intent);
+                                    ((Activity)c).finish();
+                                }
+                            });
+                        }
+                        if(response.equals("Invalid")) {
+
+                        }
+                        if(response.equals("Bad Request")) {
+
+                        }
+                    }
+
+        },
+                new ErrorListenerExtended(this) {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        int x = 2;
+                    }
+                });
+
+        queue.add(request);
+        return true;
     }
 
 }
