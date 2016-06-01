@@ -3,5 +3,7 @@
     
     <item name="progressBarLogin" type="id"/>
     <item name="btnLogin" type="id" />
+    <item name="progressBarDate" type="id"/>
+    <item name="btnDate" type="id"/>
     
 </resources>

@@ -58,6 +58,7 @@
         <activity
             android:name=".LoginActivity"
             android:launchMode="singleInstance">
+
         </activity>
         <activity android:name=".SelectDateActivity">
             <intent-filter>

@@ -8,6 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
+    android:id="@+id/layoutSelectDateRoot"
     tools:context="com.example.matthew.mapdirections.SelectDateActivity">
 
     <LinearLayout
@@ -42,10 +43,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/layoutSelectDateRoot"
+        android:id="@+id/layoutSelectDateRootCal"
         android:orientation="vertical">
 
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm Date"
+        android:id="@+id/btnSelectDateConfirm"/>
 
 </LinearLayout>

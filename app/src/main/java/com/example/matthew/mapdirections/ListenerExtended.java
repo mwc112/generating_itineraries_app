@@ -11,7 +11,7 @@ import org.json.JSONException;
 /**
  * Created by matthew on 26/04/16.
  */
-public class ListenerExtended<String> implements Response.Listener<String> {
+public class ListenerExtended<T> implements Response.Listener<T> {
 
     /*
     * Extends listener so that ui can be changed in context (Activity)
@@ -24,6 +24,6 @@ public class ListenerExtended<String> implements Response.Listener<String> {
     }
 
     @Override
-    public void onResponse(String response) {
+    public void onResponse(T response) {
     }
 }
