@@ -160,28 +160,27 @@ public class SelectDateActivity extends AppCompatActivity {
                                         }
                                     }
 
-                                    LinearLayout actualrootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
-                                    actualrootLayout.removeView(findViewById(R.id.progressBarDate));
-                                    Button button = new Button(SelectDateActivity.this);
-                                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    button.setId(R.id.btnSelectDateConfirm);
-                                    button.setLayoutParams(layoutParams);
-                                    button.setText("Confirm Date");
-                                    button.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent result = new Intent();
-                                            result.putExtra(SELECT_DATE_DATE, selectedDate);
-                                            setResult(RESULT_OK, result);
-                                            finish();
-                                        }
-                                    });
-                                    actualrootLayout.addView(button);
-
                                     ((Activity)c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            LinearLayout actualrootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
+                                            actualrootLayout.removeView(findViewById(R.id.progressBarDate));
+                                            Button button = new Button(SelectDateActivity.this);
+                                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            button.setId(R.id.btnSelectDateConfirm);
+                                            button.setLayoutParams(layoutParams);
+                                            button.setText("Confirm Date");
+                                            button.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent result = new Intent();
+                                                    result.putExtra(SELECT_DATE_DATE, selectedDate);
+                                                    setResult(RESULT_OK, result);
+                                                    finish();
+                                                }
+                                            });
+                                            actualrootLayout.addView(button);
                                             buildCalendar();
                                         }
                                     });
