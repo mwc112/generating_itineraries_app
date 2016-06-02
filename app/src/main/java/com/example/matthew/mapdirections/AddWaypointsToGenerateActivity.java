@@ -52,6 +52,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
     private final int NEW_WAYPOINT_REQUEST_CODE = 0;
     private final int WAYPOINT_MAP_REQUEST_CODE = 1;
+    private final int SELECT_DATE_REQUEST_CODE = 2;
 
     public final static String ADD_WAYPOINTS_GEN_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_WAYPOINTS";
     public final static String ADD_WAYPOINTS_GEN_NUM_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_NUM_WAYPOINTS";
@@ -244,9 +245,21 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                 num_waypoints++;
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                Status status = PlaceAutocomplete.getStatus(this, data);
             } else if (resultCode == RESULT_CANCELED) {
             }
         }
+        else if(requestCode == SELECT_DATE_REQUEST_CODE) {
+            if(resultCode == RESULT_OK) {
+                date = data.getIntArrayExtra(SelectDateActivity.SELECT_DATE_DATE);
+            }
+            else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+            } else if (resultCode == RESULT_CANCELED) {
+            }
+        }
+    }
+
+    public void onClickAddWaypointsGenDate(View view) {
+        Intent intent = new Intent(this, SelectDateActivity.class);
+        startActivityForResult(intent, SELECT_DATE_REQUEST_CODE);
     }
 }

@@ -2,6 +2,7 @@ package com.example.matthew.mapdirections;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -42,10 +43,11 @@ public class SelectDateActivity extends AppCompatActivity {
     private LinearLayout rootLayout;
     private Calendar calendar;
     private Button[] buttons;
+    private int[] buttonIds;
     private RequestQueue queue;
     int[] selectedDate;
     private HashMap<Integer, Boolean> disruptions;
-
+    public static String SELECT_DATE_DATE = "com.example.matthew.mapdirection.SELECT_DATE_DATE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class SelectDateActivity extends AppCompatActivity {
         buttons = new Button[35];
         rootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRootCal);
         linearLayouts = new LinearLayout[7];
+        buttonIds = new int[35];
         int k = 0;
         for(int j = 0; j < 7; j++) {
             LinearLayout linearLayout = new LinearLayout(this);
@@ -69,12 +72,21 @@ public class SelectDateActivity extends AppCompatActivity {
             for(int i = 0; i < 5; i++) {
                 Button button  = new Button(this);
                 buttons[k] = button;
+                buttonIds[k] = button.generateViewId();
+                button.setId(buttonIds[k]);
                 k++;
                 LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT, 0.2f);
                 button.setBackground(getResources().getDrawable(R.drawable.calendar_button, null));
                 buttonLayoutParams.setMargins(0, 0, 0, 0);
-
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectedDate[0] = v.getId() + 1;
+                        buildCalendar();
+                        v.setBackground(getResources().getDrawable(R.drawable.calendar_button_selected, null));
+                    }
+                });
                 button.setMinimumHeight(0);
                 button.setMaxHeight(10);
                 button.setLayoutParams(buttonLayoutParams);
@@ -109,6 +121,12 @@ public class SelectDateActivity extends AppCompatActivity {
         ////////////////////////////////////////////////////////////////////////////////
 
         //TODO: Why does this silently fail when 500 error returned
+        LinearLayout actualrootLayout = (LinearLayout)findViewById(R.id.layoutSelectDateRoot);
+        actualrootLayout.removeView(findViewById(R.id.btnSelectDateConfirm));
+        ProgressBar progressBar = new ProgressBar(this);
+        progressBar.setIndeterminate(true);
+        progressBar.setId(R.id.progressBarDate);
+        actualrootLayout.addView(progressBar, 2);
         StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.116.27/disruption?" +
                 "city=London&travel_mode=transit&start_date=" + start_date + "&end_date=" + end_date,
                 new ListenerExtended<String>(this) {
@@ -141,6 +159,25 @@ public class SelectDateActivity extends AppCompatActivity {
                                             }
                                         }
                                     }
+
+                                    LinearLayout actualrootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
+                                    actualrootLayout.removeView(findViewById(R.id.progressBarDate));
+                                    Button button = new Button(SelectDateActivity.this);
+                                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    button.setId(R.id.btnSelectDateConfirm);
+                                    button.setLayoutParams(layoutParams);
+                                    button.setText("Confirm Date");
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent result = new Intent();
+                                            result.putExtra(SELECT_DATE_DATE, selectedDate);
+                                            setResult(RESULT_OK, result);
+                                            finish();
+                                        }
+                                    });
+                                    actualrootLayout.addView(button);
 
                                     ((Activity)c).runOnUiThread(new Runnable() {
                                         @Override
@@ -186,23 +223,6 @@ public class SelectDateActivity extends AppCompatActivity {
     }
 
     private void buildCalendar() {
-        /*
-        LinearLayout rootLayout = (LinearLayout)findViewById(R.id.layoutSelectDateRoot);
-        rootLayout.removeView(findViewById(R.id.btnSelectDateConfirm));
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setIndeterminate(true);
-        progressBar.setId(R.id.progressBarDate);
-        rootLayout.addView(progressBar, 2);
-
-        LinearLayout actualRootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
-        rootLayout.removeView(findViewById(R.id.progressBarDate));
-        Button button = new Button(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        button.setId(R.id.btnSelectDateConfirm);
-        button.setLayoutParams(layoutParams);
-        button.setText("Confirm Date");
-        actualRootLayout.addView(button);*/
 
         TextView monthYear = ((TextView) findViewById(R.id.txtSelectDateMonth));
         monthYear.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, getResources().getConfiguration().locale) +
@@ -244,5 +264,6 @@ public class SelectDateActivity extends AppCompatActivity {
         }
         return incCalender;
     }
+
 
 }
