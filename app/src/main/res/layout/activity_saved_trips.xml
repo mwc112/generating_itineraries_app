@@ -8,7 +8,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="com.example.matthew.mapdirections.SavedTripsActivity">
+    tools:context="com.example.matthew.mapdirections.SavedTripsActivity"
+    android:id="@+id/layoutSavedTripsRoot">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,13 +17,6 @@
         android:layout_weight="0.95"
         android:id="@+id/scrllSavedTripsTrips">
     </ScrollView>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Upload"
-        android:id="@+id/btnSavedTripsUpload"
-        android:onClick="onClickSavedTripsUpload" />
 
     <LinearLayout
         android:layout_width="match_parent"

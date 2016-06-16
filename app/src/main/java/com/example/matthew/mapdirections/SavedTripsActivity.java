@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -55,11 +56,33 @@ public class SavedTripsActivity extends AppCompatActivity {
     private ScrollView scrllTrips;
     private BroadcastReceiver receiver;
     private RequestQueue queue;
+    private Button uploadButton;
+    private ProgressBar uploadProgBar;
+    private LinearLayout rootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved_trips);
+
+        rootLayout = (LinearLayout) findViewById(R.id.layoutSavedTripsRoot);
+
+        uploadProgBar = new ProgressBar(this);
+        uploadProgBar.setIndeterminate(true);
+
+        uploadButton = new Button(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        uploadButton.setLayoutParams(layoutParams);
+        uploadButton.setId(R.id.btnSavedTripsUpload);
+        uploadButton.setText("Upload");
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickSavedTripsUpload(v);
+            }
+        });
+        uploadButton.setEnabled(false);
+        rootLayout.addView(uploadButton, 1);
 
         receiver = new SavedBroadcastReceiver();
 
@@ -104,6 +127,7 @@ public class SavedTripsActivity extends AppCompatActivity {
                             linearLayout.getChildAt(selected).setBackgroundColor(Color.parseColor("#ffe3e3e3"));
                         selected = v.getId();
                         v.setBackgroundColor(Color.GREEN);
+                        findViewById(R.id.btnSavedTripsUpload).setEnabled(true);
                     }
                 });
                 linearLayout.addView(textView);
@@ -203,12 +227,9 @@ public class SavedTripsActivity extends AppCompatActivity {
         }
     }
 
-    /*public void onClickSavedTripsUpload(View view) {
-        Button uploadBtn = (Button) findViewById(R.id.btnSavedTripsUpload);
-        linearLayout.removeView(uploadBtn);
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setIndeterminate(true);
-        ((LinearLayout)findViewById(R.id.layoutSavedTripsBtns)).addView(progressBar, 1);
+    public void onClickSavedTripsUpload(View view) {
+        rootLayout.removeView(uploadButton);
+        rootLayout.addView(uploadProgBar, 1);
 
         try {
             final String filename = "trips.xml";
@@ -249,37 +270,37 @@ public class SavedTripsActivity extends AppCompatActivity {
             time[1][1] = Integer.parseInt(endTime.getLastChild().getFirstChild().getNodeValue());
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("http://139.59.188.237/save_trip?hotel=");
-            stringBuilder.append(hotel + "&route=a&waypoints=");
+            stringBuilder.append("http://178.62.116.27/save_trip?hotel=");
+            stringBuilder.append("a" + "&route=a&waypoints=");
             stringBuilder.append(new JSONArray(waypoints).toString() + "&times=");
             stringBuilder.append(new JSONArray(times_to_stay).toString() + "&transport_method=public&creator=a&start_date_time=");
             stringBuilder.append("a");
             String s = stringBuilder.toString();
 
-            StringRequest request = new StringRequest(Request.Method.POST, Uri.parse(s).toString(),
+            StringRequest request = new StringRequest(Request.Method.GET, Uri.parse(s).toString(),
                     new ListenerExtended<String>(this) {
                         @Override
                         public void onResponse(String response) {
                             Activity a = (Activity) c;
                             if(response.equals("OK")) {
-
-                                Button uploadBtn = (Button) a.findViewById(R.id.btnSavedTripsUpload);
-
+                                rootLayout.removeView(uploadProgBar);
+                                rootLayout.addView(uploadButton, 1);
                             }
-                            else if(response.equals("Bad")) {
-
+                            else if(response.equals("Bad Request")) {
+                                rootLayout.removeView(uploadProgBar);
                             }
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
+                            int x = 2;
                         }
                     });
+            queue.add(request);
         }
         catch (Exception e){}
-    }*/
+    }
 
 
 
