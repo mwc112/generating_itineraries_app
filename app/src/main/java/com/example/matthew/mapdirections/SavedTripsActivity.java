@@ -283,18 +283,34 @@ public class SavedTripsActivity extends AppCompatActivity {
                         public void onResponse(String response) {
                             Activity a = (Activity) c;
                             if(response.equals("OK")) {
-                                rootLayout.removeView(uploadProgBar);
-                                rootLayout.addView(uploadButton, 1);
+                                a.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        rootLayout.removeView(uploadProgBar);
+                                        rootLayout.addView(uploadButton, 1);
+                                    }
+                                });
                             }
                             else if(response.equals("Bad Request")) {
-                                rootLayout.removeView(uploadProgBar);
+                                a.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        rootLayout.removeView(uploadProgBar);
+                                    }
+                                });
                             }
                         }
                     },
-                    new Response.ErrorListener() {
+                    new ErrorListenerExtended(this) {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            int x = 2;
+                            Activity a = (Activity) c;
+                            a.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    rootLayout.removeView(uploadProgBar);
+                                }
+                            });
                         }
                     });
             queue.add(request);
