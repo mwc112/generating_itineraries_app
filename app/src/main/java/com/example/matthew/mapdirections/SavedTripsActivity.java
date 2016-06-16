@@ -262,22 +262,34 @@ public class SavedTripsActivity extends AppCompatActivity {
                 times_to_stay[i] = Integer.parseInt(times_to_stay_nodes.item(i).getFirstChild().getNodeValue());
             }
             int[][] time = new int[2][2];
+            int[] date_actual = new int[3];
             Node startTime = selectedChild.getChildNodes().item(1);
-            Node endTime = selectedChild.getChildNodes().item(2);
+            //Node endTime = selectedChild.getChildNodes().item(2);
+            Node date = selectedChild.getChildNodes().item(5);
+            date_actual[2] = Integer.parseInt(date.getFirstChild().getFirstChild().getNodeValue());
+            date_actual[1] = Integer.parseInt(date.getChildNodes().item(1).getFirstChild().getNodeValue());
+            date_actual[0] = Integer.parseInt(date.getLastChild().getFirstChild().getNodeValue());
             time[0][0] = Integer.parseInt(startTime.getFirstChild().getFirstChild().getNodeValue());
             time[0][1] = Integer.parseInt(startTime.getLastChild().getFirstChild().getNodeValue());
-            time[1][0] = Integer.parseInt(endTime.getFirstChild().getFirstChild().getNodeValue());
-            time[1][1] = Integer.parseInt(endTime.getLastChild().getFirstChild().getNodeValue());
+            String start = Integer.toString(date_actual[2]).substring(2) + "-" +
+                    Integer.toString(date_actual[1]) + "-" +
+                    Integer.toString(date_actual[0]) + "%20" +
+                    Integer.toString(time[0][0]) + ":" +
+                    Integer.toString(time[0][1]) + ":00";
+            //time[1][0] = Integer.parseInt(endTime.getFirstChild().getFirstChild().getNodeValue());
+            //time[1][1] = Integer.parseInt(endTime.getLastChild().getFirstChild().getNodeValue());
+
+            String route = "[]";
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("http://178.62.116.27/save_trip?hotel=");
-            stringBuilder.append("a" + "&route=a&waypoints=");
-            stringBuilder.append(new JSONArray(waypoints).toString() + "&times=");
-            stringBuilder.append(new JSONArray(times_to_stay).toString() + "&transport_method=public&creator=a&start_date_time=");
-            stringBuilder.append("a");
+            stringBuilder.append("hotel" + "&route=" + route + "&waypoints=");
+            stringBuilder.append(new JSONArray(waypoints).toString() + "&times_to_stay=");
+            stringBuilder.append(new JSONArray(times_to_stay).toString() + "&transport_method=public&creator=4&start_date_time=");
+            stringBuilder.append(start);
             String s = stringBuilder.toString();
-
-            StringRequest request = new StringRequest(Request.Method.GET, Uri.parse(s).toString(),
+            String su = Uri.parse(s).toString();
+            StringRequest request = new StringRequest(Request.Method.GET, su,
                     new ListenerExtended<String>(this) {
                         @Override
                         public void onResponse(String response) {

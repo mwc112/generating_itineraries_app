@@ -218,6 +218,8 @@ public class SelectDateActivity extends AppCompatActivity {
                 calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
             }
         }
+        selectedDate[1] = calendar.get(Calendar.MONTH);
+        selectedDate[2] = calendar.get(Calendar.YEAR);
         buildCalendar();
     }
 
@@ -263,6 +265,4 @@ public class SelectDateActivity extends AppCompatActivity {
         }
         return incCalender;
     }
-
-
 }

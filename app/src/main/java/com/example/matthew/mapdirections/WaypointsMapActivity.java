@@ -55,6 +55,8 @@ public class WaypointsMapActivity extends AppCompatActivity {
     public static String WAYPOINTS_MAP_WAYPOINTS = "com.example.matthew.WAYPOINTS_MAP_WAYPOINTS";
     public static String WAYPOINTS_MAP_NUM_WAYPOINTS = "com.example.matthew.WAYPOINTS_MAP_NUM_WAYPOINTS";
     public static String WAYPOINTS_MAP_HOTEL = "com.example.matthew.WAYPOINTS_MAP_HOTEL";
+    public static String WAYPOINTS_MAP_DATE = "com.example.matthew.WAYPOINTS_MAP_DATE";
+    public static String WAYPOINTS_MAP_TIME = "com.example.matthew.WAYPOINTS_MAP_TIME";
 
     public String routes;
 
@@ -163,10 +165,11 @@ public class WaypointsMapActivity extends AppCompatActivity {
             trip.appendChild(startTime);
             Element startTimeHour = d.createElement("hour");
             startTime.appendChild(startTimeHour);
-            startTimeHour.setTextContent("17");
+            startTimeHour.setTextContent(Integer.toString(intent.getIntArrayExtra(WAYPOINTS_MAP_TIME)[0]));
             Element startTimeMinute = d.createElement("minute");
             startTime.appendChild(startTimeMinute);
-            startTimeMinute.setTextContent("0");
+            startTimeMinute.setTextContent(Integer.toString(intent.getIntArrayExtra(WAYPOINTS_MAP_TIME)[0]));
+            //TODO: Not sure whether to use end time yet
             Element endTime = d.createElement("end_time");
             trip.appendChild(endTime);
             Element endTimeHour = d.createElement("hour");
@@ -194,6 +197,19 @@ public class WaypointsMapActivity extends AppCompatActivity {
                 time_to_stay.appendChild(time);
                 time.setTextContent(Integer.toString(Integer.parseInt(waypoints_actual[i][3]) * 60));
             }
+
+            int[] date_actual = intent.getIntArrayExtra(WAYPOINTS_MAP_DATE);
+            Element date = d.createElement("date");
+            trip.appendChild(date);
+            Element date_year = d.createElement("year");
+            date.appendChild(date_year);
+            date_year.setTextContent(Integer.toString(date_actual[2]));
+            Element date_month = d.createElement("month");
+            date.appendChild(date_month);
+            date_month.setTextContent(Integer.toString(date_actual[1]));
+            Element date_day = d.createElement("day");
+            date.appendChild(date_day);
+            date_day.setTextContent(Integer.toString(date_actual[0]));
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             StringWriter writer = new StringWriter();

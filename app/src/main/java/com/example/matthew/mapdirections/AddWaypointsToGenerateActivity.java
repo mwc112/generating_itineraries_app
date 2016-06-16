@@ -175,12 +175,14 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                     }
                     else {
                         //Pass the information to the map activity to get directions and be displayed
-                        ((TextView)findViewById(R.id.txtAddWaypointsGenStart)).setText(R.string.add_waypoints_to_gen_temp);
+                        ((TextView)findViewById(R.id.txtAddWaypointsGenEnd)).setText(R.string.add_waypoints_to_gen_temp);
 
                         Intent child_intent = new Intent(c, WaypointsMapActivity.class);
                         child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_WAYPOINTS, waypoints);
                         child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_NUM_WAYPOINTS, num_waypoints);
                         child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_HOTEL, "Buckingham Palace, London");
+                        child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_DATE, date);
+                        child_intent.putExtra(WaypointsMapActivity.WAYPOINTS_MAP_TIME, start_time);
 
                         startActivityForResult(child_intent, WAYPOINT_MAP_REQUEST_CODE);
                     }
