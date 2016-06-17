@@ -1,7 +1,10 @@
 package com.example.matthew.mapdirections;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -22,12 +25,23 @@ public class RootMenuActivity extends AppCompatActivity {
     private int SAVED_TRIPS_REQUEST_CODE = 0;
 
     private RequestQueue queue;
+    private IntentFilter intentFilter;
+    private LogoutReceiver logoutReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_root_menu);
         queue = Volley.newRequestQueue(this);
+
+        intentFilter = new IntentFilter("com.example.Logout");
+        logoutReceiver = new LogoutReceiver();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        registerReceiver(logoutReceiver, intentFilter);
     }
 
     public void onClickRootSaved(View view) {
@@ -83,5 +97,13 @@ public class RootMenuActivity extends AppCompatActivity {
                 });
         queue.add(request);
 
+    }
+
+    private class LogoutReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            unregisterReceiver(logoutReceiver);
+            finish();
+        }
     }
 }

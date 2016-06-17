@@ -317,9 +317,13 @@ public class SavedTripsActivity extends AppCompatActivity {
                                 //TODO: Callback method on new InstanceID
                                 ((MyApplication)getApplication()).setLoginToken("");
                                 ((MyApplication)getApplication()).setUserEmail("");
+                                Intent broadcastIntent = new Intent();
+                                broadcastIntent.setAction("com.example.Logout");
+                                sendBroadcast(broadcastIntent);
                                 Intent intent = new Intent(SavedTripsActivity.this, LoginActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
+                                finish();
                             }
                         }
                     },
