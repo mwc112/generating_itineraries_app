@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.renderscript.ScriptGroup;
 
+import com.google.android.gms.iid.InstanceID;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,6 +23,7 @@ public class MyApplication extends Application  {
 
     private String loginToken;
     private String unique_id;
+    private String user_email;
 
     public String getLoginToken() {
         return loginToken;
@@ -44,6 +47,14 @@ public class MyApplication extends Application  {
         this.unique_id = id;
     }
 
+    public String getUserEmail() {
+        return user_email;
+    }
+
+    public void setUserEmail(String email) {
+        user_email = email;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -52,8 +63,7 @@ public class MyApplication extends Application  {
 
         if(!id.exists()) {
             try {
-                unique_id = UUID.randomUUID().toString();
-
+                unique_id = InstanceID.getInstance(getApplicationContext()).getId();
                 FileOutputStream outputStream = openFileOutput("unique_id", Context.MODE_PRIVATE);
                 outputStream.write(unique_id.getBytes());
                 outputStream.close();
@@ -78,6 +88,17 @@ public class MyApplication extends Application  {
         loginToken = new String();
         try {
             FileInputStream tokenfileInputStream = openFileInput("login_token");
+            InputStreamReader tokenInputStreamReader = new InputStreamReader(tokenfileInputStream);
+            char[] rawTok = new char[32];
+            tokenInputStreamReader.read(rawTok);
+            tokenInputStreamReader.close();
+            loginToken = new String(rawTok);
+        }
+        catch (Exception e) {}
+
+        user_email = new String();
+        try {
+            FileInputStream tokenfileInputStream = openFileInput("user_email");
             InputStreamReader tokenInputStreamReader = new InputStreamReader(tokenfileInputStream);
             char[] rawTok = new char[32];
             tokenInputStreamReader.read(rawTok);

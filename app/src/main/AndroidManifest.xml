@@ -36,12 +36,6 @@
         <activity
             android:name=".RootMenuActivity"
             android:label="@string/title_activity_root_menu">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ChooseCreationMethodActivity" />
         <activity android:name=".ManualCreationTripActivity" />
@@ -67,7 +61,11 @@
         <activity
             android:name=".LoginActivity"
             android:launchMode="singleInstance">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".SelectDateActivity">
         </activity>
