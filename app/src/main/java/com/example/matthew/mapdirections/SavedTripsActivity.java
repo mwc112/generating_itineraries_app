@@ -287,6 +287,8 @@ public class SavedTripsActivity extends AppCompatActivity {
             stringBuilder.append(new JSONArray(waypoints).toString() + "&times_to_stay=");
             stringBuilder.append(new JSONArray(times_to_stay).toString() + "&transport_method=public&creator=4&start_date_time=");
             stringBuilder.append(start);
+            stringBuilder.append("&key=" + ((MyApplication)getApplication()).getLoginToken());
+            stringBuilder.append("&app_id=" + ((MyApplication)getApplication()).getUnique_id());
             String s = stringBuilder.toString();
             String su = Uri.parse(s).toString();
             StringRequest request = new StringRequest(Request.Method.GET, su,
@@ -310,6 +312,14 @@ public class SavedTripsActivity extends AppCompatActivity {
                                         rootLayout.removeView(uploadProgBar);
                                     }
                                 });
+                            }
+                            else if(response.equals("Invalid Login")) {
+                                //TODO: Callback method on new InstanceID
+                                ((MyApplication)getApplication()).setLoginToken("");
+                                ((MyApplication)getApplication()).setUserEmail("");
+                                Intent intent = new Intent(SavedTripsActivity.this, LoginActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
                             }
                         }
                     },
