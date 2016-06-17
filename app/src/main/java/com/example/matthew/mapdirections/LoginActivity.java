@@ -153,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                                     });
                                 } else {
                                     ((MyApplication) getApplication()).setLoginToken(response);
+                                    ((MyApplication) getApplication()).setUserEmail(email);
                                     ((Activity) c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {

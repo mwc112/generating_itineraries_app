@@ -51,8 +51,14 @@ public class MyApplication extends Application  {
         return user_email;
     }
 
-    public void setUserEmail(String email) {
-        user_email = email;
+    public void setUserEmail(String user_email) {
+        try {
+            this.user_email = user_email;
+            FileOutputStream fileOutputStream = openFileOutput("user_email", Context.MODE_PRIVATE);
+            fileOutputStream.write(user_email.getBytes());
+            fileOutputStream.close();
+        }
+        catch(Exception e){}
     }
 
     @Override
