@@ -131,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 LoginActivity.this.showProgressBar();
 
+                //TODO: Login does not work after closing app think because Instance ID can't be sent 400 error
                 final String email = ((EditText) findViewById(R.id.txtLoginEmail)).getText().toString();
                 final String password = ((EditText) findViewById(R.id.txtLoginPassword)).getText().toString();
 

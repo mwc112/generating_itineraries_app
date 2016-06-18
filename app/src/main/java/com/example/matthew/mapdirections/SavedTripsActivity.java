@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -19,6 +21,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -40,6 +43,8 @@ import org.w3c.dom.NodeList;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -130,7 +135,21 @@ public class SavedTripsActivity extends AppCompatActivity {
                         findViewById(R.id.btnSavedTripsUpload).setEnabled(true);
                     }
                 });
-                linearLayout.addView(textView);
+
+                LinearLayout.LayoutParams tripLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f);
+                LinearLayout rowLayout = new LinearLayout(this);
+                rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+                textView.setLayoutParams(tripLayoutParams);
+                rowLayout.addView(textView);
+                ImageView imageView = new ImageView(this);
+                imageView.setLayoutParams(tripLayoutParams);
+                InputStream is = getResources().openRawResource(R.raw.trip_uploaded);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                imageView.setImageBitmap(bitmap);
+                rowLayout.addView(imageView);
+
+                linearLayout.addView(rowLayout);
                 viewTrips[numTrips] = textView;
                 textView.setId(numTrips);
                 trips[numTrips] = Integer.toString(i);
@@ -278,6 +297,8 @@ public class SavedTripsActivity extends AppCompatActivity {
                     Integer.toString(time[0][1]) + ":00";
             //time[1][0] = Integer.parseInt(endTime.getFirstChild().getFirstChild().getNodeValue());
             //time[1][1] = Integer.parseInt(endTime.getLastChild().getFirstChild().getNodeValue());
+            Node id = selectedChild.getChildNodes().item(6);
+            String trip_id = id.getFirstChild().getNodeValue();
 
             String route = "[]";
 
@@ -289,6 +310,7 @@ public class SavedTripsActivity extends AppCompatActivity {
             stringBuilder.append(start);
             stringBuilder.append("&key=" + ((MyApplication)getApplication()).getLoginToken());
             stringBuilder.append("&app_id=" + ((MyApplication)getApplication()).getUnique_id());
+            stringBuilder.append("&trip_id=" + trip_id);
             String s = stringBuilder.toString();
             String su = Uri.parse(s).toString();
             StringRequest request = new StringRequest(Request.Method.GET, su,

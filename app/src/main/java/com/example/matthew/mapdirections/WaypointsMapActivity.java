@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.iid.InstanceID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -124,6 +125,34 @@ public class WaypointsMapActivity extends AppCompatActivity {
     }
 
     public void onClickMapsSave(View view) {
+        String id_filename = "trip_id";
+        File id = getBaseContext().getFileStreamPath(id_filename);
+        String max_id = "0";
+
+        if(!id.exists()) {
+            try {
+                FileOutputStream outputStream = openFileOutput(id_filename, Context.MODE_PRIVATE);
+                outputStream.write(max_id.getBytes());
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            try {
+                FileInputStream inputStream = openFileInput(id_filename);
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                char[] stream = new char[4];
+                inputStreamReader.read(stream);
+                max_id = new String(stream);
+                inputStreamReader.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
         final String filename = "trips.xml";
         try {
             File file = new File(this.getFilesDir(), filename);
@@ -210,6 +239,10 @@ public class WaypointsMapActivity extends AppCompatActivity {
             Element date_day = d.createElement("day");
             date.appendChild(date_day);
             date_day.setTextContent(Integer.toString(date_actual[0]));
+
+            Element trip_id = d.createElement("id");
+            trip.appendChild(trip_id);
+            trip_id.setTextContent(max_id);
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             StringWriter writer = new StringWriter();
