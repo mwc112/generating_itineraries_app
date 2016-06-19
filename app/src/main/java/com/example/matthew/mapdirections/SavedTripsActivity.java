@@ -39,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -87,7 +88,7 @@ public class SavedTripsActivity extends AppCompatActivity {
             }
         });
         uploadButton.setEnabled(false);
-        rootLayout.addView(uploadButton, 1);
+        rootLayout.addView(uploadProgBar, 1);
 
         receiver = new SavedBroadcastReceiver();
 
@@ -104,59 +105,106 @@ public class SavedTripsActivity extends AppCompatActivity {
 
         queue = Volley.newRequestQueue(this);
 
-        try {
-            final String filename = "trips.xml";
-            FileInputStream fis = this.openFileInput(filename);
-            InputStreamReader isr = new InputStreamReader(fis);
-            char[] inputBuffer = new char[fis.available()];
-            isr.read(inputBuffer);
-            String input = new String(inputBuffer);
-            isr.close();
-            fis.close();
-
-            ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes("UTF-8"));
-            //File file = new File(this.getFilesDir(), filename);
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document d = db.parse(bais);
-
-            Node root = d.getFirstChild();
-            NodeList children = root.getChildNodes();
-
-            for(int i = 0; i < children.getLength(); i++) {
-                TextView textView = new TextView(this);
-                textView.setText(Integer.toString(i));
-                textView.setOnClickListener(new View.OnClickListener() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://178.62.116.27/save_trip?" +
+                "method=Load&app_id=" + ((MyApplication) getApplication()).getUnique_id(),
+                new ListenerExtended<String>(this) {
                     @Override
-                    public void onClick(View v) {
-                        if (selected != -1)
-                            linearLayout.getChildAt(selected).setBackgroundColor(Color.parseColor("#ffe3e3e3"));
-                        selected = v.getId();
-                        v.setBackgroundColor(Color.GREEN);
-                        findViewById(R.id.btnSavedTripsUpload).setEnabled(true);
+                    public void onResponse(final String response) {
+                        Activity a = (Activity)c;
+                        a.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    JSONArray array = new JSONArray(response);
+
+                                    final String filename = "trips.xml";
+                                    FileInputStream fis = SavedTripsActivity.this.openFileInput(filename);
+                                    InputStreamReader isr = new InputStreamReader(fis);
+                                    char[] inputBuffer = new char[fis.available()];
+                                    isr.read(inputBuffer);
+                                    String input = new String(inputBuffer);
+                                    isr.close();
+                                    fis.close();
+
+                                    ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes("UTF-8"));
+                                    //File file = new File(this.getFilesDir(), filename);
+                                    DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                                    Document d = db.parse(bais);
+
+                                    Node root = d.getFirstChild();
+                                    NodeList children = root.getChildNodes();
+
+                                    for(int i = 0; i < children.getLength(); i++) {
+                                        TextView textView = new TextView(SavedTripsActivity.this);
+                                        textView.setText(Integer.toString(i));
+                                        textView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                if (selected != -1)
+                                                    linearLayout.getChildAt(selected).setBackgroundColor(Color.parseColor("#ffe3e3e3"));
+                                                selected = v.getId();
+                                                v.setBackgroundColor(Color.GREEN);
+                                                findViewById(R.id.btnSavedTripsUpload).setEnabled(true);
+                                            }
+                                        });
+
+                                        LinearLayout.LayoutParams tripLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                                                ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f);
+                                        LinearLayout rowLayout = new LinearLayout(SavedTripsActivity.this);
+                                        rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+                                        textView.setLayoutParams(tripLayoutParams);
+                                        rowLayout.addView(textView);
+                                        ImageView imageView = new ImageView(SavedTripsActivity.this);
+                                        imageView.setLayoutParams(tripLayoutParams);
+                                        boolean isInList = false;
+                                        for(int j = 0; j < array.length(); j++) {
+                                            if (array.getInt(j) == Integer.parseInt(children.item(i).getChildNodes().item(6).getFirstChild()
+                                                    .getNodeValue())) {
+                                                isInList = true;
+                                                break;
+                                            }
+                                        }
+                                        InputStream is;
+                                        if(isInList) {
+                                            is = getResources().openRawResource(R.raw.trip_uploaded);
+                                        }
+                                        else {
+                                            is = getResources().openRawResource(R.raw.trip_not_uploaded);
+                                        }
+                                        Bitmap bitmap = BitmapFactory.decodeStream(is);
+                                        imageView.setImageBitmap(bitmap);
+                                        rowLayout.addView(imageView);
+
+                                        linearLayout.addView(rowLayout);
+                                        viewTrips[numTrips] = textView;
+                                        textView.setId(numTrips);
+                                        trips[numTrips] = Integer.toString(i);
+                                        numTrips++;
+                                    }
+
+                                    rootLayout.removeView(uploadProgBar);
+                                    rootLayout.addView(uploadButton, 1);
+                                }
+                                catch (Exception e) {
+                                    int x = 2;
+                                }
+                            }
+                        });
+                    }
+                },
+                new ErrorListenerExtended(this) {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Activity a = (Activity)c;
+                        a.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //rootLayout.removeView(uploadProgBar);
+                            }
+                        });
                     }
                 });
-
-                LinearLayout.LayoutParams tripLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f);
-                LinearLayout rowLayout = new LinearLayout(this);
-                rowLayout.setOrientation(LinearLayout.HORIZONTAL);
-                textView.setLayoutParams(tripLayoutParams);
-                rowLayout.addView(textView);
-                ImageView imageView = new ImageView(this);
-                imageView.setLayoutParams(tripLayoutParams);
-                InputStream is = getResources().openRawResource(R.raw.trip_uploaded);
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
-                imageView.setImageBitmap(bitmap);
-                rowLayout.addView(imageView);
-
-                linearLayout.addView(rowLayout);
-                viewTrips[numTrips] = textView;
-                textView.setId(numTrips);
-                trips[numTrips] = Integer.toString(i);
-                numTrips++;
-            }
-        }
-        catch (Exception e) {}
+        queue.add(stringRequest);
     }
 
     public void onClickSavedTripsStart(View view) {
@@ -311,6 +359,7 @@ public class SavedTripsActivity extends AppCompatActivity {
             stringBuilder.append("&key=" + ((MyApplication)getApplication()).getLoginToken());
             stringBuilder.append("&app_id=" + ((MyApplication)getApplication()).getUnique_id());
             stringBuilder.append("&trip_id=" + trip_id);
+            stringBuilder.append("&method=Save");
             String s = stringBuilder.toString();
             String su = Uri.parse(s).toString();
             StringRequest request = new StringRequest(Request.Method.GET, su,

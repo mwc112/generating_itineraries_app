@@ -70,6 +70,7 @@ public class MyApplication extends Application  {
         if(!id.exists()) {
             try {
                 unique_id = InstanceID.getInstance(getApplicationContext()).getId();
+                //unique_id = UUID.randomUUID().toString();
                 FileOutputStream outputStream = openFileOutput("unique_id", Context.MODE_PRIVATE);
                 outputStream.write(unique_id.getBytes());
                 outputStream.close();
@@ -81,7 +82,7 @@ public class MyApplication extends Application  {
             try {
                 FileInputStream inputStream = openFileInput("unique_id");
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                char[] stream = new char[36];
+                char[] stream = new char[11];
                 inputStreamReader.read(stream);
                 unique_id = new String(stream);
                 inputStreamReader.close();
