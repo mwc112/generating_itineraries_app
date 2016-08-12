@@ -124,6 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         Button button = new Button(this);
         ViewGroup.LayoutParams layoutParams = new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
                 ActionBar.LayoutParams.WRAP_CONTENT);
+        button.setText("Login");
         button.setLayoutParams(layoutParams);
         button.setId(R.id.btnLogin);
         button.setOnClickListener(new View.OnClickListener() {
