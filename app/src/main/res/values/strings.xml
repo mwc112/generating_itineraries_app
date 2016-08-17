@@ -6,4 +6,5 @@
     <string name="add_waypoints_to_gen_temp">It worked</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="google_app_id">684388582015</string>
+    <string name="login_button_text">Login"</string>
 </resources>
