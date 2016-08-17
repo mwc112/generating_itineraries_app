@@ -1,8 +1,11 @@
 package com.example.matthew.mapdirections;
 
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -93,20 +96,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         /*
         * Stores start time selected and formats printed time
          */
-        DialogFragment dialogFragment = new OnTimeFragment() {
-            @Override
-            public void onTimeSet(TimePicker view, int hour, int minute) {
-                start_time[0] = hour;
-                start_time[1] = minute;
-                String print_minute = Integer.toString(minute);
-                String print_hour = Integer.toString(hour);
-                if(minute < 10)
-                    print_minute = "0" + print_minute;
-                if(hour < 10)
-                    print_hour = "0" + print_hour;
-                ((TextView) getActivity().findViewById(R.id.txtAddWaypointsGenStart)).setText(print_hour+":"+print_minute);
-            }
-        };
+        DialogFragment dialogFragment = new OnTimeFragment();
         dialogFragment.show(getSupportFragmentManager(), "time_new_day_start");
     }
 
@@ -115,20 +105,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         /*
         * Stores end time selected and formats printed time
          */
-        DialogFragment dialogFragment = new OnTimeFragment() {
-            @Override
-            public void onTimeSet(TimePicker view, int hour, int minute) {
-                end_time[0] = hour;
-                end_time[1] = minute;
-                String print_minute = Integer.toString(minute);
-                String print_hour = Integer.toString(hour);
-                if(minute < 10)
-                    print_minute = "0" + print_minute;
-                if(hour < 10)
-                    print_hour = "0" + print_hour;
-                ((TextView)getActivity().findViewById(R.id.txtAddWaypointsGenEnd)).setText(print_hour+":"+print_minute);
-            }
-        };
+        DialogFragment dialogFragment = new OnTimeFragment();
         dialogFragment.show(getSupportFragmentManager(), "time_new_day_start");
     }
 
@@ -152,7 +129,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
             return;
         }
 
-        ArrayList<String> to_pass = new ArrayList<String>();
+        ArrayList<String> to_pass = new ArrayList<>();
 
         for(int i = 0; i < num_waypoints; i++) {
             to_pass.add(waypoints[i][2]);
@@ -263,5 +240,19 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     public void onClickAddWaypointsGenDate(View view) {
         Intent intent = new Intent(this, SelectDateActivity.class);
         startActivityForResult(intent, SELECT_DATE_REQUEST_CODE);
+    }
+
+    public static class OnTimeFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+
+        @Override
+        @NonNull
+        public Dialog onCreateDialog(Bundle savedInstanceState)
+        {
+            return new TimePickerDialog(getActivity(), this, 19, 0,true);
+        }
+
+        public void onTimeSet(TimePicker view, int hour, int minute) {
+        }
+
     }
 }
