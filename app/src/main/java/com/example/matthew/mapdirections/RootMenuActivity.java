@@ -22,6 +22,8 @@ import com.android.volley.toolbox.StringRequest;
 
 public class RootMenuActivity extends AppCompatActivity {
 
+    //TODO: What if login expires while the app is open
+
     private int SAVED_TRIPS_REQUEST_CODE = 0;
 
     private RequestQueue queue;
@@ -65,7 +67,7 @@ public class RootMenuActivity extends AppCompatActivity {
 
     public void onClickRootLogout(View view) {
         ((MyApplication)getApplication()).setLoginToken("");
-        StringRequest request = new StringRequest(Request.Method.GET, "http://http://178.62.116.27/app_login?req_type=Logout" +
+        StringRequest request = new StringRequest(Request.Method.GET, "http://http://178.62.46.132/app_login?req_type=Logout" +
                 "&key=" + ((MyApplication) getApplication()).getLoginToken() + "&app_id=" + ((MyApplication) getApplication()).getUnique_id(),
                 new ListenerExtended<String>(this) {
 
