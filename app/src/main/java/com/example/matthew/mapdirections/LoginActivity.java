@@ -3,15 +3,19 @@ package com.example.matthew.mapdirections;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -126,6 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(final String response) {
                                 if (response.equals("Bad Request")) {
+                                    //TODO: Change server to show when bad email and password
                                     ((Activity) c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -133,7 +138,8 @@ public class LoginActivity extends AppCompatActivity {
                                             LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutLogin);
                                             linearLayout.removeView(progressBar);
                                             linearLayout.addView(loginButton, 3);
-                                            //TODO: Show some kind of message when it fails
+                                            Toast.makeText(LoginActivity.this.getBaseContext(),
+                                                    R.string.login_bad_request, Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 } else {
@@ -163,7 +169,8 @@ public class LoginActivity extends AppCompatActivity {
                                         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutLogin);
                                         linearLayout.removeView(progressBar);
                                         linearLayout.addView(loginButton, 3);
-                                        //TODO: Show some kind of message when it fails
+                                        Toast.makeText(LoginActivity.this.getBaseContext(),
+                                                R.string.login_server_error, Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -190,10 +197,12 @@ public class LoginActivity extends AppCompatActivity {
                             });
                         }
                         if(response.equals("Invalid")) {
-                            //TODO: Show error message
+                            Toast.makeText(LoginActivity.this.getBaseContext(),
+                                    R.string.login_invalid, Toast.LENGTH_LONG).show();
                         }
                         if(response.equals("Bad Request")) {
-                            //TODO: Show error response
+                            Toast.makeText(LoginActivity.this.getBaseContext(),
+                                    R.string.login_bad_request, Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -201,7 +210,8 @@ public class LoginActivity extends AppCompatActivity {
                 new ErrorListenerExtended(this) {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //TODO: Show error response
+                        Toast.makeText(LoginActivity.this.getBaseContext(),
+                                R.string.login_server_error, Toast.LENGTH_LONG).show();
                     }
                 });
 

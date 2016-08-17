@@ -7,4 +7,8 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="google_app_id">684388582015</string>
     <string name="login_button_text">Login"</string>
+    <string name="login_bad_request">App formed a bad request</string>
+    <string name="login_server_error">There was an server error</string>
+    <string name="login_bad_email_pass">The email or password was incorrect</string>
+    <string name="login_invalid">Login has is no longer valid</string>
 </resources>
