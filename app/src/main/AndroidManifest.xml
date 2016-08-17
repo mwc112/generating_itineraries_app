@@ -19,26 +19,12 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAgyl-9YWsJRY497FV_3fTlfwJD8k0YnTc" />
-
-        <activity
-            android:name=".AddWaypointsActivity"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity
-            android:name=".WaypointsMapActivity"
-            android:label="@string/title_activity_waypoints_map"
-            android:parentActivityName=".AddWaypointsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AddWaypointsActivity" />
-        </activity>
-        <activity android:name=".SelectTimeActivity" />
         <activity android:name=".GenerateShowDayItinaryActivity" />
         <activity
             android:name=".RootMenuActivity"
             android:label="@string/title_activity_root_menu">
         </activity>
         <activity android:name=".ChooseCreationMethodActivity" />
-        <activity android:name=".ManualCreationTripActivity" />
         <activity
             android:name=".NewWaypointActivity"
             android:windowSoftInputMode="adjustNothing" />
