@@ -10,12 +10,14 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -57,6 +59,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     private final int WAYPOINT_MAP_REQUEST_CODE = 1;
     private final int SELECT_DATE_REQUEST_CODE = 2;
 
+    private final static String TAG = "AddWptsToGenActivity";
     public final static String ADD_WAYPOINTS_GEN_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_WAYPOINTS";
     public final static String ADD_WAYPOINTS_GEN_NUM_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_NUM_WAYPOINTS";
     public final static String ADD_WAYPOINTS_GEN_HOTEL = "com.example.matthew.ADD_WAYPOINTS_GEN_HOTEL";
@@ -204,11 +207,12 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
         if (requestCode == NEW_WAYPOINT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                Log.i(TAG, "Waypoint received from NewWaypointActivity");
                 String[] result = data.getStringArrayExtra(NewWaypointActivity.NEW_WAYPOINT_WAYPOINT);
 
-                TextView textView = new TextView(this);
-                textView.setText(result[0]);
-                textView.setOnClickListener(new View.OnClickListener() {
+                TextView newWaypointTextView = new TextView(this);
+                newWaypointTextView.setText(result[0]);
+                newWaypointTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (selected != -1)
@@ -217,22 +221,28 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                         v.setBackgroundColor(Color.GREEN);
                     }
                 });
-                linearLayout.addView(textView);
-                viewWaypoints[num_waypoints] = textView;
-                textView.setId(num_waypoints);
+                linearLayout.addView(newWaypointTextView);
+                viewWaypoints[num_waypoints] = newWaypointTextView;
+                newWaypointTextView.setId(num_waypoints);
                 waypoints[num_waypoints] = result;
                 num_waypoints++;
-
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-            } else if (resultCode == RESULT_CANCELED) {
+            }
+            else if (resultCode == RESULT_CANCELED) {
+                Log.e(TAG, "Error: Waypoint not received from NewWaypointActivity");
             }
         }
         else if(requestCode == SELECT_DATE_REQUEST_CODE) {
             if(resultCode == RESULT_OK) {
+                Log.i(TAG, "Date received from SelectDateActivity");
+                Toast.makeText(getBaseContext(), R.string.add_waypoints_date_success,
+                        Toast.LENGTH_LONG).show();
                 date = data.getIntArrayExtra(SelectDateActivity.SELECT_DATE_DATE);
             }
             else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Log.e(TAG, "Error: error received from SelectDateActivity");
             } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(getBaseContext(), R.string.add_waypoints_date_cancel,
+                        Toast.LENGTH_LONG).show();
             }
         }
     }

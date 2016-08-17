@@ -13,4 +13,6 @@
     <string name="login_invalid">Login has is no longer valid</string>
     <string name="add_waypoints_activities_too_long">Activities too long</string>
     <string name="add_waypoints_day_too_long">Journey time makes day too long</string>
+    <string name="add_waypoints_date_cancel">Date selection cancelled</string>
+    <string name="add_waypoints_date_success">Date selected</string>
 </resources>
