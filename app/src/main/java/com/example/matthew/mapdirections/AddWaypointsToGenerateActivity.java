@@ -125,7 +125,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         }
         final int sum2 = sum;
         if(sum * 60 > ((end_time[0] * 60 + end_time[1]) - (start_time[0] * 60 + start_time[1]))) {
-            ((TextView) findViewById(R.id.txtAddWaypointsGenWarn)).setText("Activities too long");
+            ((TextView) findViewById(R.id.txtAddWaypointsGenWarn)).setText(R.string.add_waypoints_activities_too_long);
             return;
         }
 
@@ -147,7 +147,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                     //Check if travel time and time at locations is too long
                     if ((int)a.get(a.length() - 1) + sum2 * 3600 >
                             ((end_time[0] * 3600 + end_time[1] * 60) - (start_time[0] * 3600 + start_time[1] * 60))) {
-                        ((TextView) findViewById(R.id.txtAddWaypointsGenWarn)).setText("Journey time makes day too long");
+                        ((TextView) findViewById(R.id.txtAddWaypointsGenWarn)).setText(R.string.add_waypoints_day_too_long);
                         return;
                     }
                     else {
@@ -248,7 +248,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         @NonNull
         public Dialog onCreateDialog(Bundle savedInstanceState)
         {
-            return new TimePickerDialog(getActivity(), this, 19, 0,true);
+            return new TimePickerDialog(getActivity(), this, 19, 0, true);
         }
 
         public void onTimeSet(TimePicker view, int hour, int minute) {
