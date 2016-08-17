@@ -2,24 +2,28 @@ package com.example.matthew.mapdirections;
 
 import android.app.Application;
 import android.content.Context;
-import android.renderscript.ScriptGroup;
+import android.util.Log;
 
 import com.google.android.gms.iid.InstanceID;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.security.MessageDigest;
-import java.util.UUID;
 
 /**
  * Created by matthew on 30/05/16.
  */
-public class MyApplication extends Application  {
+public class MyApplication extends Application{
 
-    //Cache login token
+    //TODO: Cache login token
+    //TODO: Don't use email for login every time - use app_id and login_token
+    //TODO: Exceptions
+
+    private static final String TAG = "MyApplication";
+
 
     private String loginToken;
     private String unique_id;
@@ -74,8 +78,9 @@ public class MyApplication extends Application  {
                 FileOutputStream outputStream = openFileOutput("unique_id", Context.MODE_PRIVATE);
                 outputStream.write(unique_id.getBytes());
                 outputStream.close();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
+                Log.e(TAG, "Error: writing new unique id");
             }
         }
         else {
@@ -87,8 +92,9 @@ public class MyApplication extends Application  {
                 unique_id = new String(stream);
                 inputStreamReader.close();
             }
-            catch (Exception e) {
+            catch (IOException e) {
                 e.printStackTrace();
+                Log.e(TAG, "Error: Reading unique app id");
             }
         }
 
@@ -101,7 +107,15 @@ public class MyApplication extends Application  {
             tokenInputStreamReader.close();
             loginToken = new String(rawTok);
         }
-        catch (Exception e) {}
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.wtf(TAG, "Error: Login token not found despite file returning existing");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            Log.e(TAG, "Error: Reading login token");
+        }
 
         user_email = new String();
         try {
@@ -112,8 +126,13 @@ public class MyApplication extends Application  {
             tokenInputStreamReader.close();
             loginToken = new String(rawTok);
         }
-        catch (Exception e) {}
-    }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Error: Saved email not found despite having login token");
+        }
+        catch (IOException e) {
 
+        }
+    }
 
 }
