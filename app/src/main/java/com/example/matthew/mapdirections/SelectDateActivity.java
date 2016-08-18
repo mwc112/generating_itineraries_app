@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,8 +76,10 @@ public class SelectDateActivity extends AppCompatActivity {
                     result.putExtra(SELECT_DATE_DATE, selectedDate);
                     setResult(RESULT_OK, result);
                     finish();
+                    Log.i(TAG, "Date selected");
                 }
                 else {
+                    Log.i(TAG, "No date selected");
                     Toast.makeText
                             (SelectDateActivity.this.getBaseContext(),
                                     R.string.select_date_none_selected,
@@ -94,6 +97,7 @@ public class SelectDateActivity extends AppCompatActivity {
                 Intent result = new Intent();
                 setResult(RESULT_CANCELED, result);
                 finish();
+                Log.i(TAG, "Date selected cancelled");
             }
         });
 
@@ -168,6 +172,8 @@ public class SelectDateActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(final String response) {
                                 try {
+                                    Log.i(TAG, "Received TfL disruption information");
+
                                     JSONArray disruptions_res = new JSONArray(response);
 
                                     for (int i = 0; i < disruptions_res.length(); i++) {
@@ -214,6 +220,7 @@ public class SelectDateActivity extends AppCompatActivity {
                 new ErrorListenerExtended(this) {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "Error: Received error response from server");
                         useTfl = false;
                         ((Activity)c).runOnUiThread(new Runnable() {
                             @Override
@@ -259,6 +266,8 @@ public class SelectDateActivity extends AppCompatActivity {
         selectedDate[1] = calendar.get(Calendar.MONTH);
         selectedDate[2] = calendar.get(Calendar.YEAR);
 
+        Log.i(TAG, "Date selected");
+
         buildCalendar();
         findViewById(R.id.btnSelectDateMonthForward).setEnabled(true);
         findViewById(R.id.btnSelectDateMonthBack).setEnabled(true);
@@ -300,6 +309,7 @@ public class SelectDateActivity extends AppCompatActivity {
             buttons[i].setEnabled(true);
             buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button_off, null));
         }
+        Log.i(TAG, "Calendar built");
     }
 
     private Calendar increaseByDay(Calendar calendar) {
