@@ -34,6 +34,7 @@ public class SelectDateActivity extends AppCompatActivity {
     private LinearLayout[] linearLayouts;
     private LinearLayout quitLayout;
     private LinearLayout calLayout;
+    private ProgressBar busyBar;
     private Calendar calendar;
     private Button[] buttons;
     private int[] buttonIds;
@@ -55,6 +56,9 @@ public class SelectDateActivity extends AppCompatActivity {
         quitLayout = (LinearLayout) findViewById(R.id.layoutExitBtnsSelectDate);
         linearLayouts = new LinearLayout[7];
         buttonIds = new int[35];
+
+        busyBar = new ProgressBar(this);
+        busyBar.setIndeterminate(true);
 
         Button confirmButton = (Button) findViewById(R.id.btnSelectDateConfirm);
         LinearLayout.LayoutParams quitBtnLayout = new LinearLayout.LayoutParams(
@@ -157,10 +161,8 @@ public class SelectDateActivity extends AppCompatActivity {
         //TODO: Why does this silently fail when 500 error returned
         LinearLayout rootLayout = (LinearLayout)findViewById(R.id.layoutSelectDateRoot);
         rootLayout.removeView(quitLayout);
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setIndeterminate(true);
-        progressBar.setId(R.id.progressBarDate);
-        rootLayout.addView(progressBar);
+
+        rootLayout.addView(busyBar);
         StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.46.132/disruption?" +
                 "city=London&travel_mode=transit&start_date=" + start_date + "&end_date=" + end_date,
                 new ListenerExtended<String>(this) {
@@ -198,7 +200,7 @@ public class SelectDateActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             LinearLayout rootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
-                                            rootLayout.removeView(findViewById(R.id.progressBarDate));
+                                            rootLayout.removeView(busyBar);
                                             rootLayout.addView(quitLayout);
                                             buildCalendar();
                                         }
