@@ -29,6 +29,7 @@ import java.util.HashMap;
 public class SelectDateActivity extends AppCompatActivity {
 
     //TODO: Timeout for retrieving network data
+    //TODO: Prevent progress bar being created every time
 
     private LinearLayout[] linearLayouts;
     private LinearLayout quitLayout;
@@ -115,6 +116,7 @@ public class SelectDateActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         selectedDate[0] = v.getId() + 1;
+                        selected = true;
                         buildCalendar();
                         v.setBackground(getResources().getDrawable(R.drawable.calendar_button_selected, null));
                     }
@@ -237,7 +239,7 @@ public class SelectDateActivity extends AppCompatActivity {
         }
         selectedDate[1] = calendar.get(Calendar.MONTH);
         selectedDate[2] = calendar.get(Calendar.YEAR);
-        selected = true;
+
         buildCalendar();
     }
 
