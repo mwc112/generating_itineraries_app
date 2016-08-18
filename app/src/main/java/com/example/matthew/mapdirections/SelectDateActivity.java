@@ -3,15 +3,9 @@ package com.example.matthew.mapdirections;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,16 +17,12 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DateFormatSymbols;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -41,7 +31,8 @@ public class SelectDateActivity extends AppCompatActivity {
     //TODO: Timeout for retrieving network data
 
     private LinearLayout[] linearLayouts;
-    private LinearLayout rootLayout;
+    private LinearLayout quitLayout;
+    private LinearLayout calLayout;
     private Calendar calendar;
     private Button[] buttons;
     private int[] buttonIds;
@@ -59,9 +50,48 @@ public class SelectDateActivity extends AppCompatActivity {
         selectedDate = new int[3];
         queue = Volley.newRequestQueue(this);
         buttons = new Button[35];
-        rootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRootCal);
+        calLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRootCal);
+        quitLayout = (LinearLayout) findViewById(R.id.layoutExitBtnsSelectDate);
         linearLayouts = new LinearLayout[7];
         buttonIds = new int[35];
+
+        Button confirmButton = (Button) findViewById(R.id.btnSelectDateConfirm);
+        LinearLayout.LayoutParams quitBtnLayout = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
+                0.5f);
+        confirmButton.setLayoutParams(quitBtnLayout);
+        confirmButton.setText("Confirm Date");
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(selected) {
+                    Intent result = new Intent();
+                    result.putExtra(SELECT_DATE_DATE, selectedDate);
+                    setResult(RESULT_OK, result);
+                    finish();
+                }
+                else {
+                    Toast.makeText
+                            (SelectDateActivity.this.getBaseContext(),
+                                    R.string.select_date_none_selected,
+                                    Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        Button cancelButton = (Button) findViewById(R.id.btnSelectDateCancel);
+        cancelButton.setLayoutParams(quitBtnLayout);
+        cancelButton.setText("Cancel");
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent result = new Intent();
+                setResult(RESULT_CANCELED, result);
+                finish();
+            }
+        });
+
+
         int k = 0;
         for(int j = 0; j < 7; j++) {
             LinearLayout linearLayout = new LinearLayout(this);
@@ -98,7 +128,7 @@ public class SelectDateActivity extends AppCompatActivity {
                 button.setMaxWidth(displayMetrics.widthPixels / 4);
                 linearLayout.addView(button);
             }
-            rootLayout.addView(linearLayout);
+            calLayout.addView(linearLayout);
         }
     }
 
@@ -123,13 +153,12 @@ public class SelectDateActivity extends AppCompatActivity {
         ////////////////////////////////////////////////////////////////////////////////
 
         //TODO: Why does this silently fail when 500 error returned
-        LinearLayout exitLayout = (LinearLayout)findViewById(R.id.layoutExitBtnsSelectDate);
-        exitLayout.removeView(findViewById(R.id.btnSelectDateConfirm));
-        exitLayout.removeView(findViewById(R.id.btnSelectDateCancel));
+        LinearLayout rootLayout = (LinearLayout)findViewById(R.id.layoutSelectDateRoot);
+        rootLayout.removeView(quitLayout);
         ProgressBar progressBar = new ProgressBar(this);
         progressBar.setIndeterminate(true);
         progressBar.setId(R.id.progressBarDate);
-        exitLayout.addView(progressBar);
+        rootLayout.addView(progressBar);
         StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.46.132/disruption?" +
                 "city=London&travel_mode=transit&start_date=" + start_date + "&end_date=" + end_date,
                 new ListenerExtended<String>(this) {
@@ -166,47 +195,9 @@ public class SelectDateActivity extends AppCompatActivity {
                                     ((Activity)c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            LinearLayout exitLayout = (LinearLayout) findViewById(R.id.layoutExitBtnsSelectDate);
-                                            exitLayout.removeView(findViewById(R.id.progressBarDate));
-                                            Button confirmButton = new Button(SelectDateActivity.this.getBaseContext());
-                                            LinearLayout.LayoutParams buttonsLayout = new LinearLayout.LayoutParams(
-                                                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
-                                                    0.5f);
-                                            confirmButton.setId(R.id.btnSelectDateConfirm);
-                                            confirmButton.setLayoutParams(buttonsLayout);
-                                            confirmButton.setText("Confirm Date");
-                                            confirmButton.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    if(selected) {
-                                                        Intent result = new Intent();
-                                                        result.putExtra(SELECT_DATE_DATE, selectedDate);
-                                                        setResult(RESULT_OK, result);
-                                                        finish();
-                                                    }
-                                                    else {
-                                                        Toast.makeText
-                                                                (SelectDateActivity.this.getBaseContext(),
-                                                                        R.string.select_date_none_selected,
-                                                                        Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
-
-                                            exitLayout.addView(confirmButton);
-                                            Button cancelButton = new Button(SelectDateActivity.this.getBaseContext());
-                                            cancelButton.setId(R.id.btnSelectDateCancel);
-                                            cancelButton.setLayoutParams(buttonsLayout);
-                                            cancelButton.setText("Cancel");
-                                            cancelButton.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Intent result = new Intent();
-                                                    setResult(RESULT_CANCELED, result);
-                                                    finish();
-                                                }
-                                            });
-                                            exitLayout.addView(cancelButton);
+                                            LinearLayout rootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
+                                            rootLayout.removeView(findViewById(R.id.progressBarDate));
+                                            rootLayout.addView(quitLayout);
                                             buildCalendar();
                                         }
                                     });
