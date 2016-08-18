@@ -16,4 +16,5 @@
     <string name="add_waypoints_date_cancel">Date selection cancelled</string>
     <string name="add_waypoints_date_success">Date selected</string>
     <string name="select_date_none_selected">No date has been selected</string>
+    <string name="select_date_no_response">No response from server</string>
 </resources>

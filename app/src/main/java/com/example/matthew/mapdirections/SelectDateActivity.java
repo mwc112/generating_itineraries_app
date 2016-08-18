@@ -30,6 +30,8 @@ public class SelectDateActivity extends AppCompatActivity {
 
     //TODO: Timeout for retrieving network data
     //TODO: Prevent progress bar being created every time
+    //TODO: Run all UI on UI thread
+    //TODO: Resolve all methods too new for target API
 
     private LinearLayout[] linearLayouts;
     private LinearLayout quitLayout;
@@ -43,6 +45,8 @@ public class SelectDateActivity extends AppCompatActivity {
     private boolean selected = false;
     private HashMap<Integer, Boolean> disruptions;
     public static String SELECT_DATE_DATE = "com.example.matthew.mapdirection.SELECT_DATE_DATE";
+    private static final String TAG = "SelectDateActivity";
+    private boolean useTfl = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,7 +169,6 @@ public class SelectDateActivity extends AppCompatActivity {
         //TODO: Why does this silently fail when 500 error returned
         LinearLayout rootLayout = (LinearLayout)findViewById(R.id.layoutSelectDateRoot);
         rootLayout.removeView(quitLayout);
-
         rootLayout.addView(busyBar);
         StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.46.132/disruption?" +
                 "city=London&travel_mode=transit&start_date=" + start_date + "&end_date=" + end_date,
@@ -207,8 +210,8 @@ public class SelectDateActivity extends AppCompatActivity {
                                             rootLayout.removeView(busyBar);
                                             rootLayout.addView(quitLayout);
                                             buildCalendar();
-                                            ((Button)findViewById(R.id.btnSelectDateMonthForward)).setEnabled(true);
-                                            ((Button)findViewById(R.id.btnSelectDateMonthBack)).setEnabled(true);
+                                            findViewById(R.id.btnSelectDateMonthForward).setEnabled(true);
+                                            findViewById(R.id.btnSelectDateMonthBack).setEnabled(true);
                                         }
                                     });
                                 }
@@ -219,7 +222,20 @@ public class SelectDateActivity extends AppCompatActivity {
                 new ErrorListenerExtended(this) {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        int x = 2;
+                        useTfl = false;
+                        ((Activity)c).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getBaseContext(), R.string.select_date_no_response,
+                                        Toast.LENGTH_LONG).show();
+                                LinearLayout rootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
+                                rootLayout.removeView(busyBar);
+                                rootLayout.addView(quitLayout);
+                                buildCalendar();
+                                findViewById(R.id.btnSelectDateMonthForward).setEnabled(true);
+                                findViewById(R.id.btnSelectDateMonthBack).setEnabled(true);
+                            }
+                        });
                     }
                 });
 
@@ -262,16 +278,24 @@ public class SelectDateActivity extends AppCompatActivity {
         monthYear.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, getResources().getConfiguration().locale) +
                 calendar.get(Calendar.YEAR));
 
-        for (int i = 0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-            buttons[i].setText(Integer.toString(i + 1));
-            buttons[i].setEnabled(true);
+        if(useTfl) {
+            for (int i = 0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+                buttons[i].setText(Integer.toString(i + 1));
+                buttons[i].setEnabled(true);
 
-            if(disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1) != null
-                    && disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1) != false) {
-                buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button_dis, null));
+                if (disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1) != null
+                        && disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1) != false) {
+                    buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button_dis, null));
+                } else {
+                    buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button, null));
+                }
             }
-            else {
-                buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button, null));
+        }
+        else {
+            for(int i = 0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+                buttons[i].setText(Integer.toString(i + 1));
+                buttons[i].setEnabled(true);
+                buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button_off_border, null));
             }
         }
 
@@ -280,7 +304,6 @@ public class SelectDateActivity extends AppCompatActivity {
             buttons[i].setEnabled(true);
             buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button_off, null));
         }
-
     }
 
     private Calendar increaseByDay(Calendar calendar) {
