@@ -81,7 +81,7 @@ public class WaypointsMapActivity extends AppCompatActivity {
     private void plot_waypoints()
     {
         String[][] waypoints = (String[][])intent.getSerializableExtra(WAYPOINTS_MAP_WAYPOINTS);
-        final int numWaypoints = intent.getIntExtra(AddWaypointsActivity.NUM_MAP_WAYPOINTS, 0);
+        final int numWaypoints = intent.getIntExtra(AddWaypointsToGenerateActivity.ADD_WAYPOINTS_GEN_NUM, 0);
         ArrayList<String> waypoints_list = new ArrayList<String>();
 
         for(int i = 0; i < numWaypoints; i++) {

@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,8 +27,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
-import net.sf.json.JSON;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,13 +38,16 @@ import java.util.HashMap;
 
 public class SelectDateActivity extends AppCompatActivity {
 
+    //TODO: Timeout for retrieving network data
+
     private LinearLayout[] linearLayouts;
     private LinearLayout rootLayout;
     private Calendar calendar;
     private Button[] buttons;
     private int[] buttonIds;
     private RequestQueue queue;
-    int[] selectedDate;
+    private int[] selectedDate;
+    private boolean selected = false;
     private HashMap<Integer, Boolean> disruptions;
     public static String SELECT_DATE_DATE = "com.example.matthew.mapdirection.SELECT_DATE_DATE";
 
@@ -121,13 +123,14 @@ public class SelectDateActivity extends AppCompatActivity {
         ////////////////////////////////////////////////////////////////////////////////
 
         //TODO: Why does this silently fail when 500 error returned
-        LinearLayout actualrootLayout = (LinearLayout)findViewById(R.id.layoutSelectDateRoot);
-        actualrootLayout.removeView(findViewById(R.id.btnSelectDateConfirm));
+        LinearLayout exitLayout = (LinearLayout)findViewById(R.id.layoutExitBtnsSelectDate);
+        exitLayout.removeView(findViewById(R.id.btnSelectDateConfirm));
+        exitLayout.removeView(findViewById(R.id.btnSelectDateCancel));
         ProgressBar progressBar = new ProgressBar(this);
         progressBar.setIndeterminate(true);
         progressBar.setId(R.id.progressBarDate);
-        actualrootLayout.addView(progressBar, 2);
-        StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.116.27/disruption?" +
+        exitLayout.addView(progressBar);
+        StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.46.132/disruption?" +
                 "city=London&travel_mode=transit&start_date=" + start_date + "&end_date=" + end_date,
                 new ListenerExtended<String>(this) {
                     @Override
@@ -163,24 +166,47 @@ public class SelectDateActivity extends AppCompatActivity {
                                     ((Activity)c).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            LinearLayout actualrootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
-                                            actualrootLayout.removeView(findViewById(R.id.progressBarDate));
-                                            Button button = new Button(SelectDateActivity.this);
-                                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                                                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                            button.setId(R.id.btnSelectDateConfirm);
-                                            button.setLayoutParams(layoutParams);
-                                            button.setText("Confirm Date");
-                                            button.setOnClickListener(new View.OnClickListener() {
+                                            LinearLayout exitLayout = (LinearLayout) findViewById(R.id.layoutExitBtnsSelectDate);
+                                            exitLayout.removeView(findViewById(R.id.progressBarDate));
+                                            Button confirmButton = new Button(SelectDateActivity.this.getBaseContext());
+                                            LinearLayout.LayoutParams buttonsLayout = new LinearLayout.LayoutParams(
+                                                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
+                                                    0.5f);
+                                            confirmButton.setId(R.id.btnSelectDateConfirm);
+                                            confirmButton.setLayoutParams(buttonsLayout);
+                                            confirmButton.setText("Confirm Date");
+                                            confirmButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    if(selected) {
+                                                        Intent result = new Intent();
+                                                        result.putExtra(SELECT_DATE_DATE, selectedDate);
+                                                        setResult(RESULT_OK, result);
+                                                        finish();
+                                                    }
+                                                    else {
+                                                        Toast.makeText
+                                                                (SelectDateActivity.this.getBaseContext(),
+                                                                        R.string.select_date_none_selected,
+                                                                        Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+
+                                            exitLayout.addView(confirmButton);
+                                            Button cancelButton = new Button(SelectDateActivity.this.getBaseContext());
+                                            cancelButton.setId(R.id.btnSelectDateCancel);
+                                            cancelButton.setLayoutParams(buttonsLayout);
+                                            cancelButton.setText("Cancel");
+                                            cancelButton.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
                                                     Intent result = new Intent();
-                                                    result.putExtra(SELECT_DATE_DATE, selectedDate);
-                                                    setResult(RESULT_OK, result);
+                                                    setResult(RESULT_CANCELED, result);
                                                     finish();
                                                 }
                                             });
-                                            actualrootLayout.addView(button);
+                                            exitLayout.addView(cancelButton);
                                             buildCalendar();
                                         }
                                     });
@@ -201,7 +227,7 @@ public class SelectDateActivity extends AppCompatActivity {
 
     public void onClickSelectDate(View view) {
         if(view.getId() == R.id.btnSelectDateMonthBack) {
-            if(calendar.get(Calendar.MONTH) == 1) {
+            if(calendar.get(Calendar.MONTH) == 12) {
                 calendar.set(Calendar.MONTH, 12);
                 calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1);
             }
@@ -220,6 +246,7 @@ public class SelectDateActivity extends AppCompatActivity {
         }
         selectedDate[1] = calendar.get(Calendar.MONTH);
         selectedDate[2] = calendar.get(Calendar.YEAR);
+        selected = true;
         buildCalendar();
     }
 

@@ -63,6 +63,7 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
     public final static String ADD_WAYPOINTS_GEN_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_WAYPOINTS";
     public final static String ADD_WAYPOINTS_GEN_NUM_WAYPOINTS = "com.example.matthew.ADD_WAYPOINTS_GEN_NUM_WAYPOINTS";
     public final static String ADD_WAYPOINTS_GEN_HOTEL = "com.example.matthew.ADD_WAYPOINTS_GEN_HOTEL";
+    public final static String ADD_WAYPOINTS_GEN_NUM = "com.example.matthew.ADD_WAYPOINTS_GEN_NUM";
 
     private RequestQueue queue;
 

@@ -23,9 +23,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-
 import org.json.JSONObject;
 
 public class NewWaypointActivity extends AppCompatActivity {

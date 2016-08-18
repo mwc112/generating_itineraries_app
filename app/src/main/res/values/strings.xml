@@ -15,4 +15,5 @@
     <string name="add_waypoints_day_too_long">Journey time makes day too long</string>
     <string name="add_waypoints_date_cancel">Date selection cancelled</string>
     <string name="add_waypoints_date_success">Date selected</string>
+    <string name="select_date_none_selected">No date has been selected</string>
 </resources>
