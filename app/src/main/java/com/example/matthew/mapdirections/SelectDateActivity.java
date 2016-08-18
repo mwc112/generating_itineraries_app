@@ -60,6 +60,9 @@ public class SelectDateActivity extends AppCompatActivity {
         busyBar = new ProgressBar(this);
         busyBar.setIndeterminate(true);
 
+        ((Button)findViewById(R.id.btnSelectDateMonthBack)).setEnabled(false);
+        ((Button)findViewById(R.id.btnSelectDateMonthForward)).setEnabled(false);
+
         Button confirmButton = (Button) findViewById(R.id.btnSelectDateConfirm);
         LinearLayout.LayoutParams quitBtnLayout = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -112,6 +115,7 @@ public class SelectDateActivity extends AppCompatActivity {
                 buttonIds[k] = button.generateViewId();
                 button.setId(buttonIds[k]);
                 k++;
+                button.setEnabled(false);
                 LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT, 0.2f);
                 button.setBackground(getResources().getDrawable(R.drawable.calendar_button, null));
@@ -203,6 +207,8 @@ public class SelectDateActivity extends AppCompatActivity {
                                             rootLayout.removeView(busyBar);
                                             rootLayout.addView(quitLayout);
                                             buildCalendar();
+                                            ((Button)findViewById(R.id.btnSelectDateMonthForward)).setEnabled(true);
+                                            ((Button)findViewById(R.id.btnSelectDateMonthBack)).setEnabled(true);
                                         }
                                     });
                                 }
@@ -221,6 +227,9 @@ public class SelectDateActivity extends AppCompatActivity {
     }
 
     public void onClickSelectDate(View view) {
+        ((Button)findViewById(R.id.btnSelectDateMonthForward)).setEnabled(false);
+        ((Button)findViewById(R.id.btnSelectDateMonthBack)).setEnabled(false);
+
         if(view.getId() == R.id.btnSelectDateMonthBack) {
             if(calendar.get(Calendar.MONTH) == 12) {
                 calendar.set(Calendar.MONTH, 12);
@@ -243,6 +252,8 @@ public class SelectDateActivity extends AppCompatActivity {
         selectedDate[2] = calendar.get(Calendar.YEAR);
 
         buildCalendar();
+        ((Button)findViewById(R.id.btnSelectDateMonthForward)).setEnabled(true);
+        ((Button)findViewById(R.id.btnSelectDateMonthBack)).setEnabled(true);
     }
 
     private void buildCalendar() {
@@ -253,6 +264,7 @@ public class SelectDateActivity extends AppCompatActivity {
 
         for (int i = 0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
             buttons[i].setText(Integer.toString(i + 1));
+            buttons[i].setEnabled(true);
 
             if(disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1) != null
                     && disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1) != false) {
@@ -265,6 +277,7 @@ public class SelectDateActivity extends AppCompatActivity {
 
         for (int i = calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i < 35; i++) {
             buttons[i].setText("");
+            buttons[i].setEnabled(true);
             buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button_off, null));
         }
 
