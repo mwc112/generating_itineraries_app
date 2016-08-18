@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,22 +29,17 @@ import java.util.HashMap;
 
 public class SelectDateActivity extends AppCompatActivity {
 
-    //TODO: Timeout for retrieving network data
-    //TODO: Prevent progress bar being created every time
     //TODO: Run all UI on UI thread
     //TODO: Resolve all methods too new for target API
 
-    private LinearLayout[] linearLayouts;
     private LinearLayout quitLayout;
-    private LinearLayout calLayout;
     private ProgressBar busyBar;
     private Calendar calendar;
     private Button[] buttons;
-    private int[] buttonIds;
     private RequestQueue queue;
     private int[] selectedDate;
     private boolean selected = false;
-    private HashMap<Integer, Boolean> disruptions;
+    private SparseBooleanArray disruptions;
     public static String SELECT_DATE_DATE = "com.example.matthew.mapdirection.SELECT_DATE_DATE";
     private static final String TAG = "SelectDateActivity";
     private boolean useTfl = true;
@@ -52,27 +48,25 @@ public class SelectDateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_date);
-        disruptions = new HashMap<>();
+        disruptions = new SparseBooleanArray();
         selectedDate = new int[3];
         queue = Volley.newRequestQueue(this);
         buttons = new Button[35];
-        calLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRootCal);
+        LinearLayout calLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRootCal);
         quitLayout = (LinearLayout) findViewById(R.id.layoutExitBtnsSelectDate);
-        linearLayouts = new LinearLayout[7];
-        buttonIds = new int[35];
 
         busyBar = new ProgressBar(this);
         busyBar.setIndeterminate(true);
 
-        ((Button)findViewById(R.id.btnSelectDateMonthBack)).setEnabled(false);
-        ((Button)findViewById(R.id.btnSelectDateMonthForward)).setEnabled(false);
+        findViewById(R.id.btnSelectDateMonthBack).setEnabled(false);
+        findViewById(R.id.btnSelectDateMonthForward).setEnabled(false);
 
         Button confirmButton = (Button) findViewById(R.id.btnSelectDateConfirm);
         LinearLayout.LayoutParams quitBtnLayout = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
                 0.5f);
         confirmButton.setLayoutParams(quitBtnLayout);
-        confirmButton.setText("Confirm Date");
+        confirmButton.setText(R.string.confirm_btn);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +87,7 @@ public class SelectDateActivity extends AppCompatActivity {
 
         Button cancelButton = (Button) findViewById(R.id.btnSelectDateCancel);
         cancelButton.setLayoutParams(quitBtnLayout);
-        cancelButton.setText("Cancel");
+        cancelButton.setText(R.string.cancel_btn);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +101,6 @@ public class SelectDateActivity extends AppCompatActivity {
         int k = 0;
         for(int j = 0; j < 7; j++) {
             LinearLayout linearLayout = new LinearLayout(this);
-            linearLayouts[j] = linearLayout;
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ActionBar.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0,0,0,0);
@@ -116,8 +109,7 @@ public class SelectDateActivity extends AppCompatActivity {
             for(int i = 0; i < 5; i++) {
                 Button button  = new Button(this);
                 buttons[k] = button;
-                buttonIds[k] = button.generateViewId();
-                button.setId(buttonIds[k]);
+                button.setId(Button.generateViewId());
                 k++;
                 button.setEnabled(false);
                 LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -155,12 +147,12 @@ public class SelectDateActivity extends AppCompatActivity {
         selectedDate[1] = calendar.get(Calendar.MONTH);
         selectedDate[2] = calendar.get(Calendar.YEAR);
 
-        String start_date = new String(Integer.toString(selectedDate[2]) + "-" + Integer.toString(selectedDate[1]) +
-                "-" + Integer.toString(selectedDate[0]));
+        String start_date = Integer.toString(selectedDate[2]) + "-" + Integer.toString(selectedDate[1]) +
+                "-" + Integer.toString(selectedDate[0]);
 
-        String end_date = new String(Integer.toString(selectedDate[2] + 1) + "-"
+        String end_date = Integer.toString(selectedDate[2] + 1) + "-"
                 + Integer.toString(selectedDate[1]) +
-                "-" + Integer.toString(selectedDate[0]));
+                "-" + Integer.toString(selectedDate[0]);
 
         ////////////////////////////////////////////////////////////////////////////////
         //TODO: DON'T ALLOW BUTTON PRESS UNTIL HAVE RECEIVED DISRUPTIONS FROM SERVER!!//
@@ -243,8 +235,8 @@ public class SelectDateActivity extends AppCompatActivity {
     }
 
     public void onClickSelectDate(View view) {
-        ((Button)findViewById(R.id.btnSelectDateMonthForward)).setEnabled(false);
-        ((Button)findViewById(R.id.btnSelectDateMonthBack)).setEnabled(false);
+        findViewById(R.id.btnSelectDateMonthForward).setEnabled(false);
+        findViewById(R.id.btnSelectDateMonthBack).setEnabled(false);
 
         if(view.getId() == R.id.btnSelectDateMonthBack) {
             if(calendar.get(Calendar.MONTH) == 12) {
@@ -268,23 +260,26 @@ public class SelectDateActivity extends AppCompatActivity {
         selectedDate[2] = calendar.get(Calendar.YEAR);
 
         buildCalendar();
-        ((Button)findViewById(R.id.btnSelectDateMonthForward)).setEnabled(true);
-        ((Button)findViewById(R.id.btnSelectDateMonthBack)).setEnabled(true);
+        findViewById(R.id.btnSelectDateMonthForward).setEnabled(true);
+        findViewById(R.id.btnSelectDateMonthBack).setEnabled(true);
     }
 
     private void buildCalendar() {
 
         TextView monthYear = ((TextView) findViewById(R.id.txtSelectDateMonth));
-        monthYear.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, getResources().getConfiguration().locale) +
-                calendar.get(Calendar.YEAR));
+        String displayMonth = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT,
+                getResources().getConfiguration().locale);
+        String displayYear = Integer.toString(calendar.get(Calendar.YEAR));
+        monthYear.setText(String.format(getResources()
+                .getString(R.string.select_date_show_format), displayMonth, displayYear));
 
         if(useTfl) {
             for (int i = 0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-                buttons[i].setText(Integer.toString(i + 1));
+                buttons[i].setText(getResources().getString(R.string.number,
+                        i + 1));
                 buttons[i].setEnabled(true);
 
-                if (disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1) != null
-                        && disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1) != false) {
+                if (disruptions.get(calendar.get(Calendar.YEAR) * 500 + calendar.get(Calendar.MONTH) * 35 + i + 1)) {
                     buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button_dis, null));
                 } else {
                     buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button, null));
@@ -293,7 +288,8 @@ public class SelectDateActivity extends AppCompatActivity {
         }
         else {
             for(int i = 0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-                buttons[i].setText(Integer.toString(i + 1));
+                buttons[i].setText(getResources().getString(R.string.number,
+                        i + 1));
                 buttons[i].setEnabled(true);
                 buttons[i].setBackground(getResources().getDrawable(R.drawable.calendar_button_off_border, null));
             }
