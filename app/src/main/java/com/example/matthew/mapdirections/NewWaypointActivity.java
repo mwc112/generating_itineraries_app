@@ -1,7 +1,6 @@
 package com.example.matthew.mapdirections;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,9 +20,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.maps.model.LatLng;
 
-import org.json.JSONObject;
 
 public class NewWaypointActivity extends AppCompatActivity {
 
@@ -45,15 +42,20 @@ public class NewWaypointActivity extends AppCompatActivity {
 
         queue = Volley.newRequestQueue(this);
 
-        set_up_maps();
         waypoint = new String[4];
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        set_up_maps();
     }
 
     private void set_up_maps()
     {
         WebView webView = (WebView) findViewById(R.id.webAddWaypoint);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("file:///android_asset/simplemap.html");
+        webView.loadUrl("http://178.62.46.132/map");
     }
 
     public void onClickNewWaypointTxtWaypoint(View view)
@@ -82,15 +84,13 @@ public class NewWaypointActivity extends AppCompatActivity {
                 waypoint[2] = place.getLatLng().toString().substring(10,
                         place.getLatLng().toString().length() - 2);
 
-                /*WebView webView = ((WebView) findViewById(R.id.webAddWaypoint));
-                webView.setWebViewClient(new WebViewClient() {
-
+                NewWaypointActivity.this.runOnUiThread(new Runnable() {
                     @Override
-                    public void onPageFinished(WebView view, String url) {
-                        WebView webView = (WebView) findViewById(R.id.webAddWaypoint);
-                        webView.evaluateJavascript("create_markers(" + waypoint.getAddress() + ", 1);", null);
+                    public void run() {
+                        WebView webView = ((WebView) findViewById(R.id.webAddWaypoint));
+                        webView.evaluateJavascript("(function() {create_markers([\"" + waypoint[1] + "\"], 1); })();", null);
                     }
-                });*/
+                });
 
                 StringRequest request = new StringRequest(Request.Method.GET, "http://www.doc.ic.ac.uk/~mwc112/type.php?type=" +
                         place.getPlaceTypes().get(0).toString(),

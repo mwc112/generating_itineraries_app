@@ -27,13 +27,14 @@
         <activity android:name=".ChooseCreationMethodActivity" />
         <activity
             android:name=".NewWaypointActivity"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity android:name=".AddWaypointsToGenerateActivity" >
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".AddWaypointsToGenerateActivity" >
         </activity>
         <activity android:name=".SavedTripsActivity" >
         </activity>
