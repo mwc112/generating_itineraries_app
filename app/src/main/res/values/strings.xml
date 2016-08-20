@@ -24,4 +24,10 @@
     <string name="place_autocomplete_error">There was an error with place autocomplete search</string>
     <string name="place_autocomplete_success">The place was successufully selected</string>
     <string name="place_autocomplete_cancel">Place selection was cancelled</string>
+    <string name="add_waypoint_date_selected">The date was selected</string>
+    <string name="add_waypoint_date_selected_btn">Selected (Edit?)</string>
+    <string name="add_waypoint_wpt_added">New waypoint added</string>
+    <string name="add_waypoint_wpt_removed">Waypoint removed</string>
+    <string name="add_waypoint_wpt_nselected">No waypoint selected</string>
+    <string name="add_waypoint_no_wpts">There are no waypoints</string>
 </resources>

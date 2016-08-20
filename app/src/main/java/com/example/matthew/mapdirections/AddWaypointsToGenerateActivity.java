@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -182,13 +183,26 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
 
     public void onClickAddWaypointsGenRM(View view)
     {
-        if (selected == num_waypoints - 1) {
-        } else {
-            for (int i = selected; i < num_waypoints - 1; i++) {
-                viewWaypoints[i + 1].setId(i);
-                viewWaypoints[i] = viewWaypoints[i + 1];
-                waypoints[i] = waypoints[i+1];
+        if(num_waypoints == 0) {
+            Toast.makeText(getBaseContext(), R.string.add_waypoint_no_wpts,
+                    Toast.LENGTH_LONG).show();
+        }
+        else if(selected == -1){
+            Toast.makeText(getBaseContext(), R.string.add_waypoint_wpt_nselected,
+                    Toast.LENGTH_LONG).show();
+        }
+        else {
+            if (selected == num_waypoints - 1) {
             }
+            else {
+                for (int i = selected; i < num_waypoints - 1; i++) {
+                    viewWaypoints[i + 1].setId(i);
+                    viewWaypoints[i] = viewWaypoints[i + 1];
+                    waypoints[i] = waypoints[i + 1];
+                }
+            }
+            Toast.makeText(getBaseContext(), R.string.add_waypoint_wpt_removed,
+                    Toast.LENGTH_SHORT).show();
         }
 
         num_waypoints--;
@@ -209,8 +223,10 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         if (requestCode == NEW_WAYPOINT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Log.i(TAG, "Waypoint received from NewWaypointActivity");
+                //TODO: Makes app crash with toast here?
+                //Toast.makeText(getBaseContext(), R.string.add_waypoint_wpt_added,
+                //        Toast.LENGTH_SHORT).show();
                 String[] result = data.getStringArrayExtra(NewWaypointActivity.NEW_WAYPOINT_WAYPOINT);
-
                 TextView newWaypointTextView = new TextView(this);
                 newWaypointTextView.setText(result[0]);
                 newWaypointTextView.setOnClickListener(new View.OnClickListener() {
@@ -238,6 +254,9 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), R.string.add_waypoints_date_success,
                         Toast.LENGTH_LONG).show();
                 date = data.getIntArrayExtra(SelectDateActivity.SELECT_DATE_DATE);
+                Button newWaypointBtn = (Button) findViewById(R.id.btnAddWaypointGenDate);
+                newWaypointBtn.setText(R.string.add_waypoint_date_selected_btn);
+                newWaypointBtn.setTextColor(getResources().getColor(R.color.colorSelectedGreen));
             }
             else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Log.e(TAG, "Error: error received from SelectDateActivity");
