@@ -92,12 +92,12 @@ public class NewWaypointActivity extends AppCompatActivity {
                     }
                 });
 
-                StringRequest request = new StringRequest(Request.Method.GET, "http://www.doc.ic.ac.uk/~mwc112/type.php?type=" +
+                StringRequest request = new StringRequest(Request.Method.GET, "http://178.62.46.132/time?place_type=" +
                         place.getPlaceTypes().get(0).toString(),
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                ((EditText)findViewById(R.id.txtAddWaypointHours)).setText(response.substring(1));
+                                ((EditText)findViewById(R.id.txtAddWaypointHours)).setText(response);
                             }
                         }, new Response.ErrorListener() {
                     @Override
