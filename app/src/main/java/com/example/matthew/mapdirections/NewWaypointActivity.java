@@ -3,11 +3,13 @@ package com.example.matthew.mapdirections;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -31,6 +33,7 @@ public class NewWaypointActivity extends AppCompatActivity {
     private final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private String[] waypoint;
     public final static String NEW_WAYPOINT_WAYPOINT = "com.example.matthew.NEW_WAYPOINT_WAYPOINT";
+    private final static String TAG = "NewWaypointActivity";
 
     RequestQueue queue;
 
@@ -97,19 +100,30 @@ public class NewWaypointActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
+                                Log.i(TAG, "Received time to stay response");
+                                Toast.makeText(getBaseContext(), R.string.place_autocomplete_success,
+                                        Toast.LENGTH_SHORT).show();
                                 ((EditText)findViewById(R.id.txtAddWaypointHours)).setText(response);
                             }
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        ((EditText)findViewById(R.id.txtAddWaypointHours)).setText("Error");
+                        Log.e(TAG, "Error: Error receiving time to stay");
+                        Toast.makeText(NewWaypointActivity.this.getBaseContext(),
+                                R.string.no_server_response, Toast.LENGTH_LONG).show();
                     }
                 });
                 queue.add(request);
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
+                Log.e(TAG, "Error: Getting place from autocomplete - " + status.getStatusMessage());
+                Toast.makeText(getBaseContext(), R.string.place_autocomplete_error,
+                        Toast.LENGTH_LONG).show();
             } else if (resultCode == RESULT_CANCELED) {
+                Log.i(TAG, "Place autocomplete was cancelled");
+                Toast.makeText(getBaseContext(), R.string.place_autocomplete_cancel,
+                        Toast.LENGTH_LONG).show();
             }
         }
     }

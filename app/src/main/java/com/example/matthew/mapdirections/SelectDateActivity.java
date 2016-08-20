@@ -26,7 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Calendar;
-import java.util.HashMap;
 
 public class SelectDateActivity extends AppCompatActivity {
 
@@ -225,7 +224,7 @@ public class SelectDateActivity extends AppCompatActivity {
                         ((Activity)c).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getBaseContext(), R.string.select_date_no_response,
+                                Toast.makeText(getBaseContext(), R.string.no_server_response,
                                         Toast.LENGTH_LONG).show();
                                 LinearLayout rootLayout = (LinearLayout) findViewById(R.id.layoutSelectDateRoot);
                                 rootLayout.removeView(busyBar);

@@ -16,9 +16,12 @@
     <string name="add_waypoints_date_cancel">Date selection cancelled</string>
     <string name="add_waypoints_date_success">Date selected</string>
     <string name="select_date_none_selected">No date has been selected</string>
-    <string name="select_date_no_response">No response from server</string>
+    <string name="no_server_response">No response from server</string>
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
     <string name="select_date_show_format">%1$s %2$s</string>
     <string name="number">%1$d</string>
+    <string name="place_autocomplete_error">There was an error with place autocomplete search</string>
+    <string name="place_autocomplete_success">The place was successufully selected</string>
+    <string name="place_autocomplete_cancel">Place selection was cancelled</string>
 </resources>
