@@ -30,4 +30,5 @@
     <string name="add_waypoint_wpt_removed">Waypoint removed</string>
     <string name="add_waypoint_wpt_nselected">No waypoint selected</string>
     <string name="add_waypoint_no_wpts">There are no waypoints</string>
+    <string name="new_waypoint_no_hours">No length of time to stay here has been entered</string>
 </resources>

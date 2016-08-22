@@ -23,6 +23,8 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
+import java.util.regex.Pattern;
+
 
 public class NewWaypointActivity extends AppCompatActivity {
 
@@ -129,10 +131,17 @@ public class NewWaypointActivity extends AppCompatActivity {
     }
 
     public void onClickNewWaypointResult(View view) {
-        Intent intent = new Intent();
-        intent.putExtra(NEW_WAYPOINT_WAYPOINT, waypoint);
-        waypoint[3] = ((TextView)findViewById(R.id.txtAddWaypointHours)).getText().toString();
-        setResult(RESULT_OK, intent);
-        finish();
+        String hours = ((TextView)findViewById(R.id.txtAddWaypointHours)).getText().toString();
+        if(Pattern.matches("\\d++", hours)) {
+            Intent intent = new Intent();
+            intent.putExtra(NEW_WAYPOINT_WAYPOINT, waypoint);
+            waypoint[3] = ((TextView) findViewById(R.id.txtAddWaypointHours)).getText().toString();
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+        else {
+            Toast.makeText(getBaseContext(), R.string.new_waypoint_no_hours,
+                    Toast.LENGTH_LONG).show();
+        }
     }
 }

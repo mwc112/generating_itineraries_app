@@ -223,9 +223,8 @@ public class AddWaypointsToGenerateActivity extends AppCompatActivity {
         if (requestCode == NEW_WAYPOINT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Log.i(TAG, "Waypoint received from NewWaypointActivity");
-                //TODO: Makes app crash with toast here?
-                //Toast.makeText(getBaseContext(), R.string.add_waypoint_wpt_added,
-                //        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), R.string.add_waypoint_wpt_added,
+                        Toast.LENGTH_SHORT).show();
                 String[] result = data.getStringArrayExtra(NewWaypointActivity.NEW_WAYPOINT_WAYPOINT);
                 TextView newWaypointTextView = new TextView(this);
                 newWaypointTextView.setText(result[0]);
